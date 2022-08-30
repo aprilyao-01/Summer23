@@ -3,6 +3,11 @@ from typing import Union
 from pydantic import BaseModel
 
 #Create Pydantic models/schemas
+
+class TestRecord(BaseModel):
+    user: str
+
+# TODO: change all schemas into mydb model
 class ItemBase(BaseModel):      # pydantic schemas
     title: str
     description : Union[str, None] = None

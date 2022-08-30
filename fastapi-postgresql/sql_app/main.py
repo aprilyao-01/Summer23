@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Body
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -54,18 +54,31 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return items
 
 
+#TODO: change to mydb data type
+# option1: specify all the parameters
+# con: don't have validation and can be problematic if data is complicated
+# @app.post("/test/")
+# def test_add_record_1(newUser: str):
+#     index = len(testDatabase.keys()) + 1      # get the next index
+#     testDatabase[index] = {"User": newUser}      # add new record to the test db
+#     return testDatabase
 
-#option1
+# option2: pass in object
+# use pydantic to design data schema and here is when to use 'schemas.py'
 @app.post("/test/")
-def test_add_record(newUser: str):
+def test_add_record_2(newUser: schemas.TestRecord):
     index = len(testDatabase.keys()) + 1      # get the next index
-    testDatabase[index] = {"User": newUser}      # add new record to the test db
+    testDatabase[index] = {"User": newUser.user}      # get the schema's 'user' attribute
     return testDatabase
 
-
-
-
-
+# option3: access request body as a dictionary
+# scenarios: not know what data to send over right away, 
+#            or want to access the entire request body sent over and extract each item as required
+# @app.post("/test/")
+# def test_add_record_3(body = Body()):
+#     index = len(testDatabase.keys()) + 1      # get the next index
+#     testDatabase[index] = {"User": body['user']}      # extract the value of the 'user'
+#     return testDatabase
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):       # when using the dependency in a path operation function, declare it with the type Session that imported directly from SQLAlchemy
@@ -81,4 +94,15 @@ def create_item_for_user(
     return crud.create_user_item(db=db, item=item, user_id=user_id)
 
 
+# updating data
+@app.put("/test/{id}")
+def test_update(id: int, modiUser:schemas.TestRecord):
+    testDatabase[id]['User'] = modiUser.user
+    return testDatabase
 
+
+#deleting data
+@app.delete("/test/{id}")
+def test_delete(id: int):
+    del testDatabase[id]
+    return testDatabase
