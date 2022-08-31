@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 
+# TODO: update crud methods
 
 # Read a single user by ID
 def get_user(db: Session, user_id: int):

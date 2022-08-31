@@ -25,15 +25,34 @@ testDatabase = {
     3:{'User': 'U3'},
 }
 
-#TODO: display all records in home page
-@app.get("/")
-def get_all():
+# TODO: update crud methods and replace them
+
+@app.get("/test")
+def test_get():
     return testDatabase
 
-@app.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
-    return users
+# TODO: retest after add data, and join with department
+
+@app.get("/")
+def get_all(db: Session = Depends(get_db)):
+    # query = """ SELECT e.id, e.name AS emp_name, e.salary, m.name, e.dept_id, d.name 
+    #             FROM employee e
+    #             LEFT JOIN manager m ON e.manager_id = m.id
+    #             LEFT JOIN department d ON e.dept_id = d.id; """
+    # records = db.execute(query)
+    records = db.query(models.Employee.id, models.Employee.name,
+                    models.Employee.salary, models.Manager.name,
+                    models.Employee.dept_id #, models.Department.name
+                    ).join((models.Manager, models.Employee.manager_id==models.Manager.id), isouter = True
+                    # ).join(models.Department, models.Employee.dept_id == models.Department.id, isouter = True
+                    ).all()
+    
+    return records  # return all the records as a JSON list
+
+# @app.get("/users/", response_model=list[schemas.User])
+# def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+#     users = crud.get_users(db, skip=skip, limit=limit)
+#     return users
 
 #test get by id
 @app.get("/test/{id}")

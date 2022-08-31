@@ -27,18 +27,24 @@ Advantages of FastAPI is it provides interactive API documentations.
 |---|-----|-----|-----|-----|
 |**E/R Diagram**|![O-M E/R](/Users/i52/Downloads/myGit/Summer23/img/O-M.png)|![M-O E/R](/Users/i52/Downloads/myGit/Summer23/img/M-O.png)|![O-O E/R](/Users/i52/Downloads/myGit/Summer23/img/O-O.png)|![M-M E/R](/Users/i52/Downloads/myGit/Summer23/img/M-M.png)|
 |**Describe**|Each department employs a number of lecturers|Students enrol in a particular course|One person has a nose|Students take several modules|
-|**ForeignKey() on table**|Many / lecturer|Many / students|One|Many|
-|**relationship() on table**|One / department|Many / students|One|Many|
-|**Bidirectional**|relationship() and `back_populates` on both|relationship() and `back_populates` on both|Essentially|Essentially|
-||OR relationship() and `backref` on only child or parent|OR relationship() and `backref` on only lecturer or department|Usually merge the two entities together to become a single entity has all attributes of the oul ones|Usually split a M - M relationship into two O-M relationships|
+|**ForeignKey() on table**|Many / lecturer|Many / student|One?, `unique`?|Third association table / enrolment|
+|**relationship() on table**|One / department|Many / student|relationship() and `back_populates` on both, `uselist=False` on one side **OR** `relationship("the other", backref=backref("self", uselist=False))` on only department or lecturer|`relationship.secondary` on one of the two tables|
+|**Bidirectional**|relationship() with `back_populates` on both **OR** `backref` on only lecturer or department|relationship() with `back_populates` on both **OR** `backref` on only student or course|(Essentially)|relationship() with `back_populates` and `secondary` on both **OR** `backref` on only student or module ( the same `secondary`argument will be automatically used ) |
+|**Notes**|||Usually merge the two entities together to become a single entity has all attributes of the oud ones. If there aren't any contradictions, the O-O might be a sign of an unconsidered decision.|Usually split a M - M relationship into two O-M relationships|
 
 - `back_populates`: Informs each relationship about the other, so that they are kept in sync. MUST explicitly create the relationships on **both** A and B classes.
 - `backref`: Shortcut for configuring both parent.children and child.parent relationships at **one place only** on the A or the B class (not both).
+- `uselist`: A boolean value auto determined by relationship() according to relationship types. A list for O-M and M-M, a scalar for M-O. Set to **False** in bi-directional O-O.
+- `secondary`: For a many-to-many relationship, specifies the intermediary table, and is typically an instance of Table.
 
 
 ### others
 in post option 3, using docs, you will see `"string"` in the initial request body, and you have to specify the data structure in request body as you wish, like `{"user" : "test user in body"}`. Notice that when specified, use **" " double quotes** and not single quotes to ensure the string is able to be parsed on the receiving end.
 
+`sqlalchemy.orm.Query.all()`:Return the results represented by this Query as a list.
 
-`database.py` file: establish a db connection configure.
+`join()` will attempt to create a JOIN along the **natural foreign key relationship** between two entities or you can explicitly specify ON clause with `session.query(A).join(B, A.id==B.a_id)`. Add `isouter = True` to join query to implement left join.
+
+`database.py`: establish a db connection configure.
 `models.py` : create database models to represent db tables.
+`crud.py`: all CRUD functions,  to make main file more readable.
