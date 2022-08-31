@@ -22,6 +22,16 @@ Advantages of FastAPI is it provides interactive API documentations.
 - `Put` -> `U`: to update data.
 - `Delete` -> `D`: to delete data.
 
+## Response Model
+A parameter of the "decorator" method (get, post, etc) not of *path operation function*. It receives **a** Pydantic model or a **list** of Pydantic models, like `List[Item]`.
+
+FastAPI will use this `response_model` to:
+- Convert the output data to its type declaration.
+- Validate the data.
+- Add a JSON Schema for the response, in the OpenAPI path operation.
+- Will be used by the automatic documentation systems.
+- **Most importantly**: will limit the output data to that of the model. Kinda like `SELECT * FROM myview` no need to specify columns.
+
 ## Relationship Patterns in SQLAlchemy
 |   |O - M|M - O|O - O|M - M|
 |---|-----|-----|-----|-----|
@@ -38,6 +48,7 @@ Advantages of FastAPI is it provides interactive API documentations.
 - `secondary`: For a many-to-many relationship, specifies the intermediary table, and is typically an instance of Table.
 
 
+
 ### others
 in post option 3, using docs, you will see `"string"` in the initial request body, and you have to specify the data structure in request body as you wish, like `{"user" : "test user in body"}`. Notice that when specified, use **" " double quotes** and not single quotes to ensure the string is able to be parsed on the receiving end.
 
@@ -45,6 +56,9 @@ in post option 3, using docs, you will see `"string"` in the initial request bod
 
 `join()` will attempt to create a JOIN along the **natural foreign key relationship** between two entities or you can explicitly specify ON clause with `session.query(A).join(B, A.id==B.a_id)`. Add `isouter = True` to join query to implement left join.
 
+`limit()` and `offset()` Apply LIMIT and OFFSET to the query and return the newly resulting Query, used when want to retrieve only a few records from query result. LIMIT will retrieve only the number of records specified after the LIMIT keyword, unless the query itself returns fewer records than the number specified by LIMIT. OFFSET is used to skip the number of records from the results.
+
 `database.py`: establish a db connection configure.
 `models.py` : create database models to represent db tables.
-`crud.py`: all CRUD functions,  to make main file more readable.
+`crud.py`: all CRUD functions and make main file more readable.
+`schemas.py`: pydantic data schemas to handle data validation and data structure, make main file more readable.

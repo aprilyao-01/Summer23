@@ -7,8 +7,6 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 
-# TODO: update crud methods
-
 # Read a single user by ID
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -41,3 +39,55 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     db.commit()
     db.refresh(db_item)
     return db_item
+
+# Create a employee record
+def insert_employee(db: Session, employee: schemas.EmployeeCreate, dept_id: int, manager_id: int):
+    new_employee = models.Employee(**employee.dict(), dept_id = dept_id, manager_id = manager_id)
+    db.add(new_employee)        # add instance object to database session
+    db.commit()                 # commit the changes to the database (so that they are saved)
+    db.refresh(new_employee)    # refresh instance (so that it contains any new data from the database, like the generated ID)
+    return new_employee
+
+# Read multiple employees
+def select_employees(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Employee).offset(skip).limit(limit).all()
+
+# Read employee by id
+def select_employee_by_id(db: Session, emp_id: int):
+    return db.query(models.Employee).filter(models.Employee.id == emp_id).first()
+
+#TODO: Read employees by salary range
+def select_employee_by_salary(db: Session, higher: int, lower: int = -1):
+    return db.query(models.Employee).filter(models.Employee.salary < higher, models.Employee.salary > lower,).all()
+
+# Create a manager record
+def insert_manager(db: Session, manager: schemas.ManagerCreate, dept_id: int):
+    new_manager = models.Manager(**manager.dict(), dept_id = dept_id)
+    db.add(new_manager)        # add instance object to database session
+    db.commit()                 # commit the changes to the database (so that they are saved)
+    db.refresh(new_manager)    # refresh instance (so that it contains any new data from the database, like the generated ID)
+    return new_manager
+
+# Read multiple managers
+def select_managers(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Manager).offset(skip).limit(limit).all()
+
+# Read manager by id
+def select_manager_by_id(db: Session, mng_id: int):
+    return db.query(models.Manager).filter(models.Manager.id == mng_id).first()
+
+# Create a department record
+def insert_department(db: Session, department: schemas.DepartmentCreate):
+    new_department = models.Department(**department.dict())
+    db.add(new_department)        # add instance object to database session
+    db.commit()                 # commit the changes to the database (so that they are saved)
+    db.refresh(new_department)    # refresh instance (so that it contains any new data from the database, like the generated ID)
+    return new_department
+
+# Read multiple departments
+def select_departments(db: Session, skip: int = 0, limit: int = 50):
+    return db.query(models.Department).offset(skip).limit(limit).all()
+
+# Read department by id
+def select_department_by_id(db: Session, dept_id: int):
+    return db.query(models.Department).filter(models.Department.id == dept_id).first()

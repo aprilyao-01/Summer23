@@ -25,14 +25,18 @@ testDatabase = {
     3:{'User': 'U3'},
 }
 
-# TODO: update crud methods and replace them
 
 @app.get("/test")
 def test_get():
     return testDatabase
 
-# TODO: retest after add data, and join with department
+#test get by id
+@app.get("/test/{id}")
+def test_get_by_id(id: int):
+    return testDatabase[id]
 
+
+# TODO: retest after add data, and join with department
 @app.get("/")
 def get_all(db: Session = Depends(get_db)):
     # query = """ SELECT e.id, e.name AS emp_name, e.salary, m.name, e.dept_id, d.name 
@@ -49,16 +53,44 @@ def get_all(db: Session = Depends(get_db)):
     
     return records  # return all the records as a JSON list
 
-# @app.get("/users/", response_model=list[schemas.User])
-# def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     users = crud.get_users(db, skip=skip, limit=limit)
-#     return users
+@app.get("/employee/", response_model=list[schemas.Employee])
+def read_all_employees(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    employees = crud.select_employees(db, skip=skip, limit=limit)
+    return employees
 
-#test get by id
-@app.get("/test/{id}")
-def test_get_by_id(id: int):
-    return testDatabase[id]
 
+@app.get("/employee/{emp_id}", response_model=schemas.Employee)
+def read_employee_by_id(emp_id: int, db: Session = Depends(get_db)):
+    employee = crud.select_employee_by_id(db, emp_id)
+    if employee is None:            # rise exception
+        raise HTTPException(status_code=404, detail="employee not found")
+    return employee
+
+# TODO: Read employees by salary range
+
+@app.get("/manager/", response_model=list[schemas.Manager])
+def read_all_managers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    managers = crud.select_managers(db, skip=skip, limit=limit)
+    return managers
+
+@app.get("/manager/{mng_id}", response_model=schemas.Manager)
+def read_department_by_id(mng_id: int, db: Session = Depends(get_db)):
+    manager = crud.select_manager_by_id(db, mng_id)
+    if manager is None:            # rise exception
+        raise HTTPException(status_code=404, detail="manager not found")
+    return manager
+
+@app.get("/department/", response_model=list[schemas.Department])
+def read_all_department(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    departments = crud.select_departments(db, skip=skip, limit=limit)
+    return departments
+
+@app.get("/department/{dept_id}", response_model=schemas.Department)
+def read_department_by_id(dept_id: int, db: Session = Depends(get_db)):
+    department = crud.select_department_by_id(db, dept_id)
+    if department is None:            # rise exception
+        raise HTTPException(status_code=404, detail="department not found")
+    return department
 
 @app.get("/users/{user_id}", response_model=schemas.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
@@ -73,7 +105,6 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return items
 
 
-#TODO: change to mydb data type
 # option1: specify all the parameters
 # con: don't have validation and can be problematic if data is complicated
 # @app.post("/test/")
@@ -98,6 +129,20 @@ def test_add_record_2(newUser: schemas.TestRecord):
 #     index = len(testDatabase.keys()) + 1      # get the next index
 #     testDatabase[index] = {"User": body['user']}      # extract the value of the 'user'
 #     return testDatabase
+
+
+@app.post("/department/")
+def add_department(department: schemas.DepartmentCreate, db: Session = Depends(get_db)):
+    return crud.insert_department(db, department)
+
+@app.post("/department/{dept_id}/manager/", response_model=schemas.Manager)
+def add_manager_in_department(dept_id: int, department: schemas.DepartmentCreate, db: Session = Depends(get_db)):
+    return crud.insert_manager(db, department, dept_id)
+
+#  TODO: insert employee under the relation department and manager
+@app.post("/employee/")
+def add_employee(employee: schemas.EmployeeCreate, db: Session = Depends(get_db)):
+    return crud.insert_employee(db, employee)
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):       # when using the dependency in a path operation function, declare it with the type Session that imported directly from SQLAlchemy

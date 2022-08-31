@@ -25,7 +25,7 @@ class Employee(Base):       # models
     #relationship -> contain the values from other tables related to this one
     # employee-manager: M-O, employee-department: M-O
     with_manager = relationship("Manager", backref= "with_employee")
-    belong_department = relationship("Department", backref= "has_employee")
+    belong_department = relationship("Department", backref= "has_employees")
     
 
 
@@ -37,7 +37,7 @@ class Manager(Base):       #models
     dept_id = Column(Integer, ForeignKey("department.id", onupdate="CASCADE", ondelete="SET NULL"))
   
     # department-manager: O-M
-    belong_department = relationship("Department", backref="has_manager")
+    belong_department = relationship("Department", backref="has_managers")
     # with_employee = relationship("Employee", back_populates="with_manager")
 
 
@@ -47,5 +47,27 @@ class Department(Base):       #models
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable = False)
    
-    # has_manager = relationship("User", back_populates="items")
-    # has_employee = relationship("User", back_populates="belong_department")
+    # has_managers = relationship("User", back_populates="items")
+    # has_employees = relationship("User", back_populates="belong_department")
+
+class User(Base):       # models
+    __tablename__ = "users"     #table name
+
+    #attributes -> a column in table
+    id = Column(Integer, primary_key = True, index = True)
+    email = Column(String, unique = True, index = True)
+    hashed_password = Column(String)
+    is_active = Column(Boolean, default = True)
+
+    #relationship -> contain the values from other tables related to this one
+    items = relationship("Item", back_populates = "owner")
+
+class Item(Base):       #models
+    __tablename__ = "items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    description = Column(String, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="items")
