@@ -23,15 +23,17 @@ Advantages of FastAPI is it provides interactive API documentations.
 - `Delete` -> `D`: to delete data.
 
 ## Relationship Patterns in SQLAlchemy
-|   |O - O|O - M|M - O|M - M|
-|:--|---|---|---|---|
-|**ForeignKey() on**|a|child|c|d|
-|**relationship() on**|a|parent|c|d|
-|**Bidirectional**|a|relationship() and `back_populates` on both|c|d|
-||a|OR relationship() and `backref` on only child or parent|c|d|
+|   |O - M|M - O|O - O|M - M|
+|---|-----|-----|-----|-----|
+|**E/R Diagram**|![O-M E/R](/Users/i52/Downloads/myGit/Summer23/img/O-M.png)|![M-O E/R](/Users/i52/Downloads/myGit/Summer23/img/M-O.png)|![O-O E/R](/Users/i52/Downloads/myGit/Summer23/img/O-O.png)|![M-M E/R](/Users/i52/Downloads/myGit/Summer23/img/M-M.png)|
+|**Describe**|Each department employs a number of lecturers|Students enrol in a particular course|One person has a nose|Students take several modules|
+|**ForeignKey() on table**|Many / lecturer|Many / students|One|Many|
+|**relationship() on table**|One / department|Many / students|One|Many|
+|**Bidirectional**|relationship() and `back_populates` on both|relationship() and `back_populates` on both|Essentially|Essentially|
+||OR relationship() and `backref` on only child or parent|OR relationship() and `backref` on only lecturer or department|Usually merge the two entities together to become a single entity has all attributes of the oul ones|Usually split a M - M relationship into two O-M relationships|
 
-- `back_populates`: Informs each relationship about the other, so that they are kept in sync. MUST explicitly create the relationships on **both** parent and child classes.
-- `backref`: Shortcut for configuring both parent.children and child.parent relationships at **one place only** on the parent or the child class (not both).
+- `back_populates`: Informs each relationship about the other, so that they are kept in sync. MUST explicitly create the relationships on **both** A and B classes.
+- `backref`: Shortcut for configuring both parent.children and child.parent relationships at **one place only** on the A or the B class (not both).
 
 
 ### others
