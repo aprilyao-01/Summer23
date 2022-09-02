@@ -12,6 +12,10 @@ Advantages of FastAPI is it provides interactive API documentations.
 - Add `/docs` at hte end of route, can go to the API provided by *Swagger UI*: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)<br>
     Every routes will be list out and can be used for easily debugging and testing. Click the available route, then click "**Try it out**" and then "**Execute**".
 - Add `/redoc` at hte end of route, can go to the API provided by *ReDoc*: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+## [Test Plan Record](/fastapi-postgresql/sql_app/TestPlan.md)
+The file records test plan for [`main.py`](/fastapi-postgresql/sql_app/main.py). Ordered by table, operation.
+
 <br> 
 ---
 
@@ -50,7 +54,7 @@ FastAPI will use this `response_model` to:
 
 
 ### others
-in post option 3, using docs, you will see `"string"` in the initial request body, and you have to specify the data structure in request body as you wish, like `{"user" : "test user in body"}`. Notice that when specified, use **" " double quotes** and not single quotes to ensure the string is able to be parsed on the receiving end.
+In post option 3, using docs, you will see `"string"` in the initial request body, and you have to specify the data structure in request body as you wish, like `{"user" : "test user in body"}`. Notice that when specified, use **" " double quotes** and not single quotes to ensure the string is able to be parsed on the receiving end.
 
 `sqlalchemy.orm.Query.all()`:Return the results represented by this Query as a list.
 

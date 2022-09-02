@@ -1,8 +1,9 @@
 from itertools import count
 from typing import Union
-from fastapi import Depends, FastAPI, HTTPException, Body
-from sqlalchemy.orm import Session
+
+from fastapi import Body, Depends, FastAPI, HTTPException
 from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
@@ -39,37 +40,13 @@ def test_get_by_id(id: int):
     return testDatabase[id]
 
 
-# TODO: retest after add data, and join with department
-@app.get("/")
+@app.get("/", response_model=list[schemas.Department])
 def get_all(db: Session = Depends(get_db)):
-    # query = """ SELECT e.id, e.name AS emp_name, e.salary, m.name, e.dept_id, d.name 
-    #             FROM employee e
-    #             LEFT JOIN manager m ON e.manager_id = m.id
-    #             LEFT JOIN department d ON e.dept_id = d.id; """
-    # records = db.execute(query)
-    records = db.query(models.Employee.id, models.Employee.name,
-                    models.Employee.salary, models.Manager.name,
-                    models.Employee.dept_id #, models.Department.name
-                    ).join((models.Manager, models.Employee.manager_id==models.Manager.id), isouter = True
-                    # ).join(models.Department, models.Employee.dept_id == models.Department.id, isouter = True
-                    ).all()
-    
-    return records  # return all the records as a JSON list
-
-@app.get("/employee/", response_model=list[schemas.Employee])
-def read_all_employees(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    employees = crud.select_employees(db, skip=skip, limit=limit)
-    return employees
-
-
-@app.get("/employee/{emp_id}", response_model=schemas.Employee)
-def read_employee_by_id(emp_id: int, db: Session = Depends(get_db)):
-    employee = crud.select_employee_by_id(db, emp_id)
-    if employee is None:            # rise exception
-        raise HTTPException(status_code=404, detail="employee not found")
-    return employee
-
-# TODO: Read employees by salary range
+    try:
+        department = crud.select_departments(db, skip=None, limit=None)
+    except ProgrammingError as e:       # table been dropped
+        raise HTTPException(status_code=500, detail="Table been dropped")
+    return department
 
 @app.get("/department/", response_model=list[schemas.Department])
 def read_all_departments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -102,25 +79,34 @@ def read_all_managers(skip: int = 0, limit: int = 100, db: Session = Depends(get
 @app.get("/manager/{dept_id}", response_model=list[schemas.Manager])
 def read_managers_by_department(dept_id: int, db: Session = Depends(get_db)):
     try:
-        manager = crud.select_manager_by_dept(db, dept_id)
-        if manager is None:            # rise exception
-            raise HTTPException(status_code=404, detail="Manager not found")
+        managers = crud.select_manager_by_dept(db, dept_id=dept_id)
+        if crud.select_department_by_id(db, dept_id=dept_id) is None:
+            raise HTTPException(status_code=404, detail="Department does not exist")
+        if len(managers) == 0:            # rise exception
+            raise HTTPException(status_code=404, detail="Manager not found in this department")
     except ProgrammingError as e:       # table been dropped
         raise HTTPException(status_code=500, detail="Manager table been dropped")
-    return manager
+    return managers
 
 
-@app.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+@app.get("/employee/", response_model=list[schemas.Employee])
+def read_all_employees(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    try:
+        employees = crud.select_employees(db, skip=skip, limit=limit)
+    except ProgrammingError as e:       # table been dropped
+        raise HTTPException(status_code=500, detail="Employee table been dropped")
+    return employees
 
-@app.get("/items/", response_model=list[schemas.Item])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_items(db, skip=skip, limit=limit)
-    return items
+
+@app.get("/employee/{emp_id}", response_model=schemas.Employee)
+def read_employee_by_id(emp_id: int, db: Session = Depends(get_db)):
+    try:
+        employee = crud.select_employee_by_id(db, emp_id)
+        if employee is None:
+            raise HTTPException(status_code=404, detail="Employee not found")
+    except ProgrammingError as e:       # table been dropped
+        raise HTTPException(status_code=500, detail="Employee table been dropped")
+    return employee
 
 '''
 # option1: specify all the parameters
@@ -164,8 +150,9 @@ def add_departments(departments: list[schemas.DepartmentCreate], db: Session = D
     try:
         for department in departments:
             db_department = crud.select_department_by_name(db, department.name)
-            if db_department:       # check if department exists
+            if db_department:       # check if department exist
                 skip.append(db_department)
+                print("******** Insert skipped. Department " + department.name + " already existed.")
                 continue
                 # raise HTTPException(status_code=400, detail="Department already registered")
             else:
@@ -184,7 +171,7 @@ def add_managers_in_department(dept_id: int, managers: list[schemas.ManagerCreat
     try:
         for manager in managers:
             db_manager = crud.select_department_by_name(db, manager.name)
-            if db_manager:       # check if manager exists, even if two people have same name.
+            if db_manager:       # check if manager exist, even if two people have same name.
                 skip.append(db_manager)
                 continue
                 # raise HTTPException(status_code=400, detail="Manager already registered")
@@ -205,15 +192,15 @@ def add_managers(managers: list[schemas.ManagerCreate], db: Session = Depends(ge
     try:
         for manager in managers:
             db_manager = crud.select_manager_by_dept_and_name(db, manager.name, manager.dept_id)
-            if db_manager:       # check if manager exists, even if two people have same name.
+            if db_manager:       # check if manager exist, even if two people have same name.
                 skip.append(manager)
-                print("******** Insert skipped. Manager " + manager.name + " already exists in this department." 
+                print("******** Insert skipped. Manager " + manager.name + " already existed in this department." 
                         +" For people have same name, try nickname such as: Mike & Mike Junior. ")
                 continue
                 # raise HTTPException(status_code=400, detail="Manager already registered")
             elif crud.select_department_by_id(db, dept_id=manager.dept_id) is None:
                 skip.append(manager)
-                print("******** Insert skipped. Department " + str(manager.dept_id) + " no exists!")
+                print("******** Insert skipped. Department " + str(manager.dept_id) + " does not exist!")
                 continue
             else:
                 succ_add.append(crud.insert_manager(db, manager))
@@ -223,23 +210,41 @@ def add_managers(managers: list[schemas.ManagerCreate], db: Session = Depends(ge
         print("******** Success add " + str(len(succ_add)) + " record(s).  \n******** Skip " + str(len(skip)) + " record(s).  ")
     return succ_add
 
-#  TODO: insert employee under the relation department and manager
-@app.post("/employee/", response_model=schemas.Employee)
-def add_employee(employee: schemas.EmployeeCreate, db: Session = Depends(get_db)):
-    return crud.insert_employee(db, employee)
-
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):       # when using the dependency in a path operation function, declare it with the type Session that imported directly from SQLAlchemy
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
-
-@app.post("/users/{user_id}/items/", response_model=schemas.Item)
-def create_item_for_user(
-    user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
-):
-    return crud.create_user_item(db=db, item=item, user_id=user_id)
+@app.post("/employee/", response_model=list[schemas.Employee])
+def add_employees(employees: list[schemas.EmployeeCreate], db: Session = Depends(get_db)):
+    succ_add: list[schemas.Employee] = []
+    skip: list[schemas.Employee] = []
+    try:
+        for employee in employees:
+            db_employee = crud.select_employee_by_all(db, check=employee)
+            db_dept = crud.select_department_by_id(db, dept_id=employee.dept_id)
+            db_manager = crud.select_manager_by_id(db, mng_id=employee.manager_id)
+            
+            if db_employee:       # check if employee exist, even if two people have same name.
+                skip.append(employee)
+                print("******** Insert skipped. Employee " + employee.name + " already existed with same manager and department." 
+                        +" For people have same name, try nickname such as: Mike & Mike Junior. ")
+                continue
+                # raise HTTPException(status_code=400, detail="Manager already registered")
+            elif db_dept is None:
+                skip.append(employee)
+                print("******** Insert skipped. Department " + str(employee.dept_id) + " does not exist!")
+                continue
+            elif db_manager is None:
+                skip.append(employee)
+                print("******** Insert skipped. Manager " + str(employee.manager_id) + " does not exist!")
+                continue
+            elif db_manager.dept_id != employee.dept_id:
+                skip.append(employee)
+                print("******** Insert skipped. Department " + str(employee.dept_id) + " does not have manager " + str(employee.manager_id))
+                continue
+            else:
+                succ_add.append(crud.insert_employee(db, employee))
+    except ProgrammingError as e:       # table been dropped
+        raise HTTPException(status_code=500, detail="Employee table been dropped")
+    finally:
+        print("******** Success add " + str(len(succ_add)) + " record(s).  \n******** Skip " + str(len(skip)) + " record(s).  ")
+    return succ_add
 
 
 # updating data
@@ -256,7 +261,7 @@ def update_department_by_id(dept_id: int, modi_dept: schemas.DepartmentCreate, d
         if db_dept is None:            # rise exception
             raise HTTPException(status_code=404, detail="Department not found")
         elif crud.select_department_by_name(db, dept_name=modi_dept.name):
-            raise HTTPException(status_code=400, detail="Department already exists")
+            raise HTTPException(status_code=400, detail="Department already existed")
         else:
             crud.update_department_by_id(db, dept_id=dept_id, modi_name=modi_dept.name)
     except ProgrammingError as e:       # table been dropped
@@ -272,14 +277,38 @@ def update_manager_by_id(mng_id: int, modi_mng: schemas.ManagerCreate, db: Sessi
             raise HTTPException(status_code=404, detail="Manager not found")
         elif crud.select_manager_by_dept_and_name(db, name=modi_mng.name, dept_id=modi_mng.dept_id):
             raise HTTPException(status_code=400, 
-                detail="Manager already exists in department.For people have same name, try nickname such as: Mike & Mike Junior.")
+                detail="Manager already existed in department. For people have same name, try nickname such as: Mike & Mike Junior.")
         elif crud.select_department_by_id(db, dept_id=modi_mng.dept_id) is None:
-            raise HTTPException(status_code=500, detail="Department not exits.")
+            raise HTTPException(status_code=500, detail="Update manager failed. Target department does not exist.")
         else:
             crud.update_manager_by_id(db, id=mng_id, modi_manager=modi_mng)
     except ProgrammingError as e:       # table been dropped
         raise HTTPException(status_code=500, detail="Manager table been dropped.")
     return db_mng
+
+
+#update employee by emp_id
+@app.put("/employee/{emp_id}", response_model=schemas.Employee)
+def update_employee_by_id(emp_id: int, modi_emp: schemas.EmployeeCreate, db: Session = Depends(get_db)):
+    try:
+        db_emp = crud.select_employee_by_id(db, emp_id=emp_id)
+        db_manager = crud.select_manager_by_id(db, mng_id=modi_emp.manager_id)
+        if db_emp is None:            # rise exception
+            raise HTTPException(status_code=404, detail="Employee not found")
+        elif crud.select_employee_by_all(db, check=modi_emp):
+            raise HTTPException(status_code=400, 
+                detail="Employee already existed with same manager and department. For people have same name, try nickname such as: Mike & Mike Junior.")
+        elif crud.select_department_by_id(db, dept_id=modi_emp.dept_id) is None:
+            raise HTTPException(status_code=500, detail="Update employee failed. Target department does not exist.")
+        # elif crud.select_manager_by_id(db, mng_id=modi_emp.manager_id) is None:
+        #     raise HTTPException(status_code=500, detail="Update employee failed. Target manager does not exist.")
+        elif db_manager.dept_id != modi_emp.dept_id :
+            raise HTTPException(status_code=500, detail="Update employee failed. Target manager does not exist in this department.")
+        else:
+            crud.update_employee_by_id(db, id=emp_id, modi_employee=modi_emp)
+    except ProgrammingError as e:       # table been dropped
+        raise HTTPException(status_code=500, detail="Employee table been dropped.")
+    return db_emp
 
 #deleting data
 @app.delete("/test/{id}")
@@ -302,7 +331,7 @@ def delete_department_by_id(dept_id: int, db: Session = Depends(get_db)):
     try:
         department = crud.select_department_by_id(db, dept_id)
         if department is None:            # rise exception
-            raise HTTPException(status_code=404, detail="Department not exists")
+            raise HTTPException(status_code=404, detail="Department does not exist")
         else:
             crud.delete_department(db, department)
     except ProgrammingError as e:       # table been dropped
@@ -324,9 +353,30 @@ def delete_manager_by_id(mng_id: int, db: Session = Depends(get_db)):
     try:
         manager = crud.select_manager_by_id(db, mng_id)
         if manager is None:            # rise exception
-            raise HTTPException(status_code=404, detail="Manager not exists")
+            raise HTTPException(status_code=404, detail="Manager does not exist")
         else:
             crud.delete_manager(db, manager)
     except ProgrammingError as e:       # table been dropped
         raise HTTPException(status_code=500, detail="Manager table been dropped")
     return crud.select_managers(db, None, None)
+
+@app.delete("/employee/")
+def drop_employee(db: Session = Depends(get_db)):
+    try:
+        response = crud.drop_employee_table(db)
+        # print(type(response))
+    except Exception as ex:
+        raise HTTPException(status_code=500, detail=str(ex))
+    return response
+
+@app.delete("/employee/{emp_id}", response_model=list[schemas.Employee])
+def delete_employee_by_id(emp_id: int, db: Session = Depends(get_db)):
+    try:
+        employee = crud.select_employee_by_id(db, emp_id)
+        if employee is None:            # rise exception
+            raise HTTPException(status_code=404, detail="Employee does not exist")
+        else:
+            crud.delete_employee(db, employee)
+    except ProgrammingError as e:       # table been dropped
+        raise HTTPException(status_code=500, detail="Employee table been dropped")
+    return crud.select_employees(db, None, None)

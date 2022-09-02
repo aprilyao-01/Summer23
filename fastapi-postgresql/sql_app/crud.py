@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 
+
+'''
 # Read a single user by ID
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -40,27 +42,7 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     db.commit()
     db.refresh(db_item)
     return db_item
-
-# Create a employee record
-def insert_employee(db: Session, employee: schemas.EmployeeCreate, dept_id: int, manager_id: int):
-    new_employee = models.Employee(**employee.dict(), dept_id = dept_id, manager_id = manager_id)
-    db.add(new_employee)        # add instance object to database session
-    db.commit()                 # commit the changes to the database (so that they are saved)
-    db.refresh(new_employee)    # refresh instance (so that it contains any new data from the database, like the generated ID)
-    return new_employee
-
-# Read multiple employees
-def select_employees(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Employee).offset(skip).limit(limit).all()
-
-# Read employee by id
-def select_employee_by_id(db: Session, emp_id: int):
-    return db.query(models.Employee).filter(models.Employee.id == emp_id).first()
-
-#TODO: Read employees by salary range
-def select_employee_by_salary(db: Session, higher: int, lower: int = -1):
-    return db.query(models.Employee).filter(models.Employee.salary < higher, models.Employee.salary > lower,).all()
-
+'''
 
 # Create a department record
 def insert_department(db: Session, department: schemas.DepartmentCreate):
@@ -105,12 +87,6 @@ def drop_department_table(db: Session):
 
 
 # Create a manager record
-# def insert_manager(db: Session, manager: schemas.ManagerCreate, dept_id: int):
-#     new_manager = models.Manager(**manager.dict(), dept_id = dept_id)
-#     db.add(new_manager)         # add instance object to database session
-#     db.commit()                 # commit the changes to the database (so that they are saved)
-#     db.refresh(new_manager)     # refresh instance (so that it contains any new data from the database, like the generated ID)
-#     return new_manager
 def insert_manager(db: Session, manager: schemas.ManagerCreate):
     new_manager = models.Manager(**manager.dict())
     db.add(new_manager)         # add instance object to database session
@@ -126,13 +102,11 @@ def select_managers(db: Session, skip: int = 0, limit: int = 100):
 def select_manager_by_id(db: Session, mng_id: int):
     return db.query(models.Manager).get(mng_id)
 
-# Read manager by name
-def select_manager_by_name(db: Session, mng_name: str):
-    return db.query(models.Manager).filter(models.Manager.name == mng_name).first()
-
+# Read manager by department and name
 def select_manager_by_dept_and_name(db: Session, name: str, dept_id:int):
     return db.query(models.Manager).filter(models.Manager.name == name, models.Manager.dept_id == dept_id).first()
 
+# Read managers by department
 def select_manager_by_dept(db: Session, dept_id: int):
     return db.query(models.Manager).filter(models.Manager.dept_id == dept_id).all()
 
@@ -156,3 +130,54 @@ def drop_manager_table(db: Session):
     db.execute("DROP TABLE IF EXISTS manager CASCADE;")
     db.commit()
     return {"Drop table manager": "True"}
+
+
+# Create a employee record
+def insert_employee(db: Session, employee: schemas.EmployeeCreate):
+    new_employee = models.Employee(**employee.dict())
+    db.add(new_employee)         # add instance object to database session
+    db.commit()                  # commit the changes to the database (so that they are saved)
+    db.refresh(new_employee)     # refresh instance (so that it contains any new data from the database, like the generated ID)
+    return new_employee
+
+
+# Read multiple employees
+def select_employees(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Employee).offset(skip).limit(limit).all()
+
+# Read employee by id
+def select_employee_by_id(db: Session, emp_id: int):
+    return db.query(models.Employee).get(emp_id)
+
+# Read employee by department
+def select_employee_by_dept(db: Session, dept_id: int):
+    return db.query(models.Employee).filter(models.Employee.dept_id == dept_id).all()
+
+# Read employee check if exist
+def select_employee_by_all(db: Session, check: schemas.EmployeeCreate):
+    return db.query(models.Employee).filter(models.Employee.name == check.name,
+                                    models.Employee.salary == check.salary,
+                                    models.Employee.dept_id == check.dept_id,
+                                    models.Employee.manager_id == check.manager_id).first()
+
+# Update employee by id
+def update_employee_by_id(db: Session, id:int, modi_employee: schemas.EmployeeCreate):
+    db_emp = db.query(models.Employee).get(id)
+    db_emp.name = modi_employee.name
+    db_emp.salary = modi_employee.salary
+    db_emp.manager_id = modi_employee.manager_id
+    db_emp.dept_id = modi_employee.dept_id
+    db.commit()
+    return db_emp
+
+# delete employee record
+def delete_employee(db: Session, employee: schemas.Employee):
+    db.delete(employee)
+    db.commit()
+    return
+
+# drop employee table
+def drop_employee_table(db: Session):
+    db.execute("DROP TABLE IF EXISTS employee;")
+    db.commit()
+    return {"Drop table employee": "True"}

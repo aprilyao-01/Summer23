@@ -23,3 +23,22 @@ PostgreSQL
 		- SQLAlchemy: same as Peewee
 		- Pandas: useful when need data visualization
 - [`peewee_module.py`](/PostgreSQL/peewee_module.py) : auto generated file by *Peewee -> Working with existing databases* block in *PostgreSQL_Python_Advanced.ipynb*.
+
+2. `fastapi-postgresql/sql_app`
+```bash
+fastapi-postgresql/sql_app
+├── readme.md
+├── __init__.py
+├── crud.py
+├── database.py
+├── main.py
+├── models.py
+├── schemas.py
+└── TestPlan.md
+```
+- [`crud.py`](/fastapi-postgresql/sql_app/crud.py): All CRUD functions and make main file more readable.
+- [`database.py`](/fastapi-postgresql/sql_app/database.py):  Establish a db connection configure.
+- [`main.py`](/fastapi-postgresql/sql_app/main.py) : Main entrance, all path and corresponding operations.
+- [`models.py`](/fastapi-postgresql/sql_app/models.py) : Create database models to represent db tables.
+- [`schemes.py`](/fastapi-postgresql/sql_app/schemes.py) : Pydantic data schemas to handle data validation and data structure, make main file more readable.
+- [`TestPlan.md`](/fastapi-postgresql/sql_app/TestPlan.md) : Test plan records for `main.py`. Ordered by table, operation.
