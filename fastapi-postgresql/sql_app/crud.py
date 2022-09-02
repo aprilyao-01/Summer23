@@ -2,6 +2,7 @@
 # CRUD: Create, Read, Update, and Delete
 # ...although in this example we are only creating and reading
 
+from unittest import mock
 from sqlalchemy.orm import Session
 # allow to declare the type of the db parameters and have better type checks and completion in functions
 
@@ -60,21 +61,6 @@ def select_employee_by_id(db: Session, emp_id: int):
 def select_employee_by_salary(db: Session, higher: int, lower: int = -1):
     return db.query(models.Employee).filter(models.Employee.salary < higher, models.Employee.salary > lower,).all()
 
-# Create a manager record
-def insert_manager(db: Session, manager: schemas.ManagerCreate, dept_id: int):
-    new_manager = models.Manager(**manager.dict(), dept_id = dept_id)
-    db.add(new_manager)        # add instance object to database session
-    db.commit()                 # commit the changes to the database (so that they are saved)
-    db.refresh(new_manager)    # refresh instance (so that it contains any new data from the database, like the generated ID)
-    return new_manager
-
-# Read multiple managers
-def select_managers(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Manager).offset(skip).limit(limit).all()
-
-# Read manager by id
-def select_manager_by_id(db: Session, mng_id: int):
-    return db.query(models.Manager).filter(models.Manager.id == mng_id).first()
 
 # Create a department record
 def insert_department(db: Session, department: schemas.DepartmentCreate):
@@ -90,4 +76,83 @@ def select_departments(db: Session, skip: int = 0, limit: int = 50):
 
 # Read department by id
 def select_department_by_id(db: Session, dept_id: int):
-    return db.query(models.Department).filter(models.Department.id == dept_id).first()
+    return db.query(models.Department).get(dept_id)
+    # return db.query(models.Department).filter(models.Department.id == dept_id).first()
+
+# Read department by name
+def select_department_by_name(db: Session, dept_name: str):
+    return db.query(models.Department).filter(models.Department.name == dept_name).first()
+
+# Update department by id
+def update_department_by_id(db: Session, dept_id: int, modi_name:str):
+    db_dept = db.query(models.Department).get(dept_id)
+    db_dept.name = modi_name
+    db.commit()
+    return db_dept
+
+# delete department record
+def delete_department(db: Session, department: schemas.Department):
+    db.delete(department)
+    db.commit()
+    return
+
+# drop department table
+def drop_department_table(db: Session):
+    db.execute("DROP TABLE IF EXISTS department CASCADE;")
+    db.commit()
+    return {"Drop table department": "True"}
+
+
+
+# Create a manager record
+# def insert_manager(db: Session, manager: schemas.ManagerCreate, dept_id: int):
+#     new_manager = models.Manager(**manager.dict(), dept_id = dept_id)
+#     db.add(new_manager)         # add instance object to database session
+#     db.commit()                 # commit the changes to the database (so that they are saved)
+#     db.refresh(new_manager)     # refresh instance (so that it contains any new data from the database, like the generated ID)
+#     return new_manager
+def insert_manager(db: Session, manager: schemas.ManagerCreate):
+    new_manager = models.Manager(**manager.dict())
+    db.add(new_manager)         # add instance object to database session
+    db.commit()                 # commit the changes to the database (so that they are saved)
+    db.refresh(new_manager)     # refresh instance (so that it contains any new data from the database, like the generated ID)
+    return new_manager
+
+# Read multiple managers
+def select_managers(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Manager).offset(skip).limit(limit).all()
+
+# Read manager by id
+def select_manager_by_id(db: Session, mng_id: int):
+    return db.query(models.Manager).get(mng_id)
+
+# Read manager by name
+def select_manager_by_name(db: Session, mng_name: str):
+    return db.query(models.Manager).filter(models.Manager.name == mng_name).first()
+
+def select_manager_by_dept_and_name(db: Session, name: str, dept_id:int):
+    return db.query(models.Manager).filter(models.Manager.name == name, models.Manager.dept_id == dept_id).first()
+
+def select_manager_by_dept(db: Session, dept_id: int):
+    return db.query(models.Manager).filter(models.Manager.dept_id == dept_id).all()
+
+
+# Update manager by id
+def update_manager_by_id(db: Session, id:int, modi_manager: schemas.ManagerCreate):
+    db_mng = db.query(models.Manager).get(id)
+    db_mng.name = modi_manager.name
+    db_mng.dept_id = modi_manager.dept_id
+    db.commit()
+    return db_mng
+
+# delete manager record
+def delete_manager(db: Session, manager: schemas.Manager):
+    db.delete(manager)
+    db.commit()
+    return
+
+# drop manager table
+def drop_manager_table(db: Session):
+    db.execute("DROP TABLE IF EXISTS manager CASCADE;")
+    db.commit()
+    return {"Drop table manager": "True"}

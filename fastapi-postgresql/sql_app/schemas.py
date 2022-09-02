@@ -7,13 +7,22 @@ from pydantic import BaseModel
 class TestRecord(BaseModel):
     user: str
 
-class EmployeeBase(BaseModel):          #seems useless?
+class EmployeeBase(BaseModel):
     name: str
-    salary: Union[int, None] = None
+
 
 class EmployeeCreate(EmployeeBase):      # attributes that needed when create this record
+    salary: Union[int, None] = None
+    dept_id: Union[int, None] = None
+    manager_id: Union[int, None] = None
+    
+
+class EmployeeNameList(EmployeeBase):       # orm mode to used under related table query
     pass
-   
+
+    class Config:
+        orm_mode = True
+
 class Employee(EmployeeBase):           # attributes that needed to become a ORM objects, should be same as model table
     id: int                             # if has 'top-secret' attribute like password, should NOT include
     dept_id: int
@@ -27,13 +36,19 @@ class ManagerBase(BaseModel):          #seems useless?
     name: str
 
 class ManagerCreate(ManagerBase):      # attributes that needed when create this record
-    pass
+    dept_id: int
    
+
+class ManagerNameList(ManagerBase):       # orm mode to used under related table query
+    pass
+
+    class Config:
+        orm_mode = True
 
 class Manager(ManagerBase):           # attributes that needed to become a ORM objects, should be same as model table
     id: int
     dept_id: int
-    with_employee: list[Employee] = []
+    monitor_employee: list[EmployeeNameList] = []
 
     class Config:       #internal Config class to turn pydantic model into ORM mode (aka arbitrary class instances)
         orm_mode = True      # to support models that map to ORM objects
@@ -48,8 +63,8 @@ class DepartmentCreate(DepartmentBase):      # attributes that needed when creat
 
 class Department(DepartmentBase):           # attributes that needed to become a ORM objects, should be same as model table
     id: int
-    has_managers: list[Manager] = []
-    has_employees: list[Employee] = []
+    has_managers: list[ManagerNameList] = []
+    has_employees: list[EmployeeNameList] = []
 
     class Config:       #internal Config class to turn pydantic model into ORM mode (aka arbitrary class instances)
         orm_mode = True      # to support models that map to ORM objects

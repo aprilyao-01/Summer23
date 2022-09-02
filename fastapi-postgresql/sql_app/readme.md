@@ -35,7 +35,7 @@ FastAPI will use this `response_model` to:
 ## Relationship Patterns in SQLAlchemy
 |   |O - M|M - O|O - O|M - M|
 |---|-----|-----|-----|-----|
-|**E/R Diagram**|![O-M E/R](img/O-M.png)|![M-O E/R](img/M-O.png)|![O-O E/R](img/O-O.png)|![M-M E/R](img/M-M.png)|
+|**E/R Diagram**|![O-M E/R](/img/O-M.png)|![M-O E/R](/img/M-O.png)|![O-O E/R](/img/O-O.png)|![M-M E/R](/img/M-M.png)|
 |**Describe**|Each department employs a number of lecturers|Students enrol in a particular course|One person has a nose|Students take several modules|
 |**ForeignKey() on table**|Many / lecturer|Many / student|One?, `unique`?|Third association table / enrolment|
 |**relationship() on table**|One / department|Many / student|relationship() and `back_populates` on both, `uselist=False` on one side **OR** `relationship("the other", backref=backref("self", uselist=False))` on only department or lecturer|`relationship.secondary` on one of the two tables|
