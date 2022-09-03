@@ -1,6 +1,6 @@
 # Summer23
 
-1. `PostgreSQL`
+## `PostgreSQL`
 ```bash
 PostgreSQL
 ├── PostgreSQL_Python.ipynb
@@ -24,21 +24,39 @@ PostgreSQL
 		- Pandas: useful when need data visualization
 - [`peewee_module.py`](/PostgreSQL/peewee_module.py) : auto generated file by *Peewee -> Working with existing databases* block in *PostgreSQL_Python_Advanced.ipynb*.
 
-2. `fastapi-postgresql/sql_app`
+## `fastapi-postgresql`
 ```bash
-fastapi-postgresql/sql_app
+fastapi-postgresql
 ├── readme.md
-├── __init__.py
-├── crud.py
-├── database.py
-├── main.py
-├── models.py
-├── schemas.py
-└── TestPlan.md
+├── sqlalchemy_app
+│	├── __init__.py
+│	├── crud.py
+│	├── database.py
+│	├── main.py
+│	├── models.py
+│	├── schemas.py
+│	└── TestPlan.md
+├── peewee_app
+│	├── __init__.py
+│	├── crud.py
+│	├── database.py
+│	├── main.py
+│	├── models.py
+│	├── schemas.py
+└──	└── TestPlan.md
 ```
-- [`crud.py`](/fastapi-postgresql/sql_app/crud.py): All CRUD functions and make main file more readable.
-- [`database.py`](/fastapi-postgresql/sql_app/database.py):  Establish a db connection configure.
-- [`main.py`](/fastapi-postgresql/sql_app/main.py) : Main entrance, all path and corresponding operations.
-- [`models.py`](/fastapi-postgresql/sql_app/models.py) : Create database models to represent db tables.
-- [`schemes.py`](/fastapi-postgresql/sql_app/schemes.py) : Pydantic data schemas to handle data validation and data structure, make main file more readable.
-- [`TestPlan.md`](/fastapi-postgresql/sql_app/TestPlan.md) : Test plan records for `main.py`. Ordered by table, operation.
+### `sqlalchemy_app`
+- [`crud.py`](/fastapi-postgresql/sqlalchemy_app/crud.py): All CRUD functions and make main file more readable.
+- [`database.py`](/fastapi-postgresql/sqlalchemy_app/database.py):  Establish a SQLAlchemy db connection by configure.
+- [`main.py`](/fastapi-postgresql/sqlalchemy_app/main.py) : Main entrance, all path and corresponding operations.
+- [`models.py`](/fastapi-postgresql/sqlalchemy_app/models.py) : Create database models to represent db tables.
+- [`schemes.py`](/fastapi-postgresql/sqlalchemy_app/schemes.py) : Pydantic data schemas to handle data validation and data structure, make main file more readable.
+- [`TestPlan.md`](/fastapi-postgresql/sqlalchemy_app/TestPlan.md) : Test plan records for `main.py`. Ordered by table, operation.
+
+### `peewee_app`
+<!-- - [`crud.py`](/fastapi-postgresql/peewee_app/crud.py): All CRUD functions and make main file more readable. -->
+- [`database.py`](/fastapi-postgresql/peewee_app/database.py):  Establish a Peewee db connection configure.
+- [`main.py`](/fastapi-postgresql/peewee_app/main.py) : Main entrance, all path and corresponding operations.
+- [`models.py`](/fastapi-postgresql/peewee_app/models.py) : Create database models to represent db tables.
+- [`schemes.py`](/fastapi-postgresql/peewee_app/schemes.py) : Pydantic data schemas to handle data validation and data structure, make main file more readable.
+<!-- - [`TestPlan.md`](/fastapi-postgresql/peewee_app/TestPlan.md) : Test plan records for `main.py`. Ordered by table, operation. -->
