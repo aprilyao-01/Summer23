@@ -3,10 +3,10 @@ import time
 from typing import List, Union
 
 from fastapi import Depends, FastAPI, HTTPException
+from pydantic import ValidationError
 
 from . import crud, database, models, schemas
 from .database import db_state_default
-from pydantic import ValidationError
 
 # create db tables
 database.db.connect()
@@ -48,12 +48,12 @@ def read_all_departments(skip: int = 0, limit: int = 50):
     try:
         if not models.Department.table_exists():
             raise HTTPException(status_code=500, detail="Department table been dropped")
-        department = crud.select_departments(skip=skip, limit=limit)
+        departments = crud.select_departments(skip=skip, limit=limit)
     except ValidationError:
         raise HTTPException(status_code=500, detail="response_model not match")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return department
+    return departments
 
 @app.get("/department/{dept_id}", response_model=schemas.Department, dependencies=[Depends(get_db)])
 def read_department_by_id(dept_id: int):
@@ -88,9 +88,12 @@ def read_managers_by_department(dept_id: int):
     try:
         if not models.Manager.table_exists():
             raise HTTPException(status_code=500, detail="Manager table been dropped")
+        crud.select_department_by_id(dept_id=dept_id)
         managers = crud.select_manager_by_dept(dept_id=dept_id)
-    except models.Manager.DoesNotExist:      #raise by select not found
-        raise HTTPException(status_code=404, detail="Manager not found")
+        if len(managers) == 0:            # rise exception
+            raise HTTPException(status_code=404, detail="Manager not found in this department")
+    except models.Department.DoesNotExist:
+        raise HTTPException(status_code=404, detail="Department does not exist")
     except ValidationError:
         raise HTTPException(status_code=500, detail="response_model not match")
     except Exception as e:
@@ -117,6 +120,8 @@ def read_employee_by_id(emp_id: int):
         if not models.Employee.table_exists():
             raise HTTPException(status_code=500, detail="Employee table been dropped")
         employee = crud.select_employee_by_id(emp_id)
+        print(type(employee))
+        print(employee)
     except models.Employee.DoesNotExist:        #raise by select not found
             raise HTTPException(status_code=404, detail="Employee not found")
     except ValidationError:
@@ -141,6 +146,7 @@ def add_departments(departments: list[schemas.DepartmentCreate]):
                 continue
                 # raise HTTPException(status_code=400, detail="Department already registered")
             if crud.insert_department(department):  #return 1 for succ inset 1 record
+                print(crud.insert_department(department))
                 succ_add.append(crud.select_department_by_name(department.name))
     except ValidationError:
         raise HTTPException(status_code=500, detail="response_model not match")
@@ -224,6 +230,9 @@ def add_employees(employees: list[schemas.EmployeeCreate]):
 @app.put("/department/{dept_id}", response_model=schemas.Department, dependencies=[Depends(get_db)])
 def update_department_by_id(dept_id: int, modi_dept: schemas.DepartmentCreate):
     try:
+        if not models.Department.table_exists():
+            raise HTTPException(status_code=500, detail="Department table been dropped")
+        
         db_dept = crud.select_department_by_id(dept_id=dept_id)
         if db_dept is None:            # rise exception
             raise HTTPException(status_code=404, detail="Department not found")
@@ -233,7 +242,7 @@ def update_department_by_id(dept_id: int, modi_dept: schemas.DepartmentCreate):
             crud.update_department_by_id(dept_id=dept_id, modi_name=modi_dept.name)
     except ValidationError:
         raise HTTPException(status_code=500, detail="response_model not match")
-    except Exception as e:       # table been dropped
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return db_dept
 
@@ -294,14 +303,15 @@ def drop_departments():
 @app.delete("/department/{dept_id}", response_model=list[schemas.Department], dependencies=[Depends(get_db)])
 def delete_department_by_id(dept_id: int):
     try:
-        department = crud.select_department_by_id(dept_id)
-        if department is None:            # rise exception
-            raise HTTPException(status_code=404, detail="Department does not exist")
-        else:
-            crud.delete_department_by_id(dept_id)
+        if not models.Department.table_exists():
+            raise HTTPException(status_code=500, detail="Department table been dropped")
+        crud.select_department_by_id(dept_id)    #raise does not exist if cannot found
+        crud.delete_department_by_id(dept_id)
+    except models.Department.DoesNotExist:
+        raise HTTPException(status_code=404, detail="Department does not exist")
     except ValidationError:
         raise HTTPException(status_code=500, detail="response_model not match")
-    except Exception as e:       # table been dropped
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return crud.select_departments(None, None)
 
@@ -310,7 +320,6 @@ def delete_department_by_id(dept_id: int):
 def drop_managers():
     try:
         response = crud.drop_manager_table()
-        # print(type(response))
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
     return response
@@ -318,11 +327,13 @@ def drop_managers():
 @app.delete("/manager/{mng_id}", response_model=list[schemas.Manager], dependencies=[Depends(get_db)])
 def delete_manager_by_id(mng_id: int):
     try:
-        manager = crud.select_manager_by_id(mng_id)
-        if manager is None:            # rise exception
-            raise HTTPException(status_code=404, detail="Manager does not exist")
-        else:
-            crud.delete_manager(manager)
+        if not models.Manager.table_exists():
+            raise HTTPException(status_code=500, detail="Manager table been dropped")
+        
+        crud.select_manager_by_id(mng_id)   #raise does not exist if cannot found
+        crud.delete_manager_by_id(mng_id)
+    except models.Manager.DoesNotExist:
+        raise HTTPException(status_code=404, detail="Manager does not exist")
     except ValidationError:
         raise HTTPException(status_code=500, detail="response_model not match")
     except Exception as e:       # table been dropped
@@ -333,7 +344,6 @@ def delete_manager_by_id(mng_id: int):
 def drop_employee():
     try:
         response = crud.drop_employee_table()
-        # print(type(response))
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
     return response
@@ -341,13 +351,26 @@ def drop_employee():
 @app.delete("/employee/{emp_id}", response_model=list[schemas.Employee], dependencies=[Depends(get_db)])
 def delete_employee_by_id(emp_id: int):
     try:
-        employee = crud.select_employee_by_id(emp_id)
-        if employee is None:            # rise exception
-            raise HTTPException(status_code=404, detail="Employee does not exist")
-        else:
-            crud.delete_employee(employee)
+        if not models.Employee.table_exists():
+            HTTPException(status_code=500, detail="Employee table been dropped")
+        
+        crud.select_employee_by_id(emp_id)        #raise does not exist if cannot found
+        crud.delete_employee_by_id(emp_id)
+    except models.Employee.DoesNotExist:
+        raise HTTPException(status_code=404, detail="Employee does not exist")
     except ValidationError:
         raise HTTPException(status_code=500, detail="response_model not match")
-    except Exception as e:       # table been dropped
+    except Exception as e:
         raise HTTPException(status_code=500,detail=str(e))
     return crud.select_employees(None, None)
+
+@app.delete("/", dependencies=[Depends(get_db)])
+def drop_all():
+    try:
+        responses = []
+        responses.append(crud.drop_employee_table())
+        responses.append(crud.drop_manager_table())
+        responses.append(crud.drop_department_table())
+    except Exception as ex:
+        raise HTTPException(status_code=500, detail=str(ex))
+    return responses

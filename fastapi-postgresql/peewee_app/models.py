@@ -13,9 +13,6 @@ class Department(Model):        # auto chose the name of the tables based on the
     # If do not specify a primary key, Peewee will automatically create an auto-incrementing primary key named “id”.
 
     name = CharField(unique=True)
-   
-    # has_managers = relationship("User", back_populates="items")
-    # has_employees = relationship("User", back_populates="belong_department")
 
     class Meta:
         database = db # This model uses the "peewee_test.db" database.
@@ -23,8 +20,8 @@ class Department(Model):        # auto chose the name of the tables based on the
 
 class Manager(Model): 
     name = CharField()
-    dept= ForeignKeyField(Department, backref='has_managers', on_update='CASCADE', on_delete='SET NULL')
-    # with_employee = relationship("Employee", back_populates="with_manager")
+    dept= ForeignKeyField(Department, backref='has_managers', null=True, 
+            on_update='CASCADE', on_delete='SET NULL', lazy_load=False)
 
     class Meta:
         database = db # This model uses the "peewee_test.db" database.
@@ -33,8 +30,11 @@ class Manager(Model):
 class Employee(Model):
     name = CharField()
     salary = IntegerField(null=True, constraints=[Check('salary > 0')])
-    dept= ForeignKeyField(Department, backref= 'has_employees', null=True, on_update='CASCADE', on_delete='SET NULL')
-    manager= ForeignKeyField(Manager, backref= 'with_employee', null=True, on_update='CASCADE', on_delete='SET NULL')
+    dept= ForeignKeyField(Department, backref= 'has_employees', null=True, 
+            on_update='CASCADE', on_delete='SET NULL', lazy_load=False)
+            
+    manager= ForeignKeyField(Manager, backref= 'with_employee', null=True, 
+            on_update='CASCADE', on_delete='SET NULL',lazy_load=False )
 
     class Meta:
         database = db # This model uses the "peewee_test.db" database.
