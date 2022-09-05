@@ -29,7 +29,7 @@ class Manager(Model):
 
 class Employee(Model):
     name = CharField()
-    salary = IntegerField(null=True, constraints=[Check('salary > 0')])
+    salary = IntegerField(null=True, constraints=[Check('salary >= 0')])
     dept= ForeignKeyField(Department, backref= 'has_employees', null=True, 
             on_update='CASCADE', on_delete='SET NULL', lazy_load=False)
             

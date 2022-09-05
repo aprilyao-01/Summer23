@@ -21,15 +21,22 @@ def select_departments(skip: int = 0, limit: int = 50) -> Optional[list[schemas.
     return departments
 
 # Read department by id -> Model| raise DepartmentDoesNotExist if id does not exist
-def select_department_by_id(dept_id: int) -> Union[schemas.Department,Exception]:
+def select_department_get_by_id(dept_id: int) -> Union[schemas.Department,Exception]:
     department = models.Department.get_by_id(dept_id)
     department = response_department(department)
+    return department
+
+def select_department_by_id(dept_id: int) -> Optional[schemas.Department]:
+    department = models.Department.filter(models.Department.id == dept_id).first()
+    if department:
+        department = response_department(department)
     return department
 
 # Read department by name -> Model | None
 def select_department_by_name(dept_name: str) -> Optional[schemas.Department]:
     department = models.Department.filter(models.Department.name == dept_name).first()
-    department = response_department(department)
+    if department:      # if department != None
+        department = response_department(department)
     return department
 
 # Update department by id -> Model| raise DepartmentDoesNotExist if id does not exist
@@ -63,15 +70,23 @@ def select_managers(skip: int = 0, limit: int = 100)-> list[schemas.Manager]:
     return managers
 
 # Read manager by id
-def select_manager_by_id(mng_id: int)-> Union[schemas.Manager,Exception]:
+def select_manager_get_by_id(mng_id: int)-> Union[schemas.Manager,Exception]:
     manager = models.Manager.get_by_id(mng_id)
     manager = response_manager(manager)
+    return manager
+
+
+def select_manager_by_id(mng_id: int)-> Optional[schemas.Manager]:
+    manager = models.Manager.filter(models.Manager.id == mng_id).first()
+    if manager:
+        manager = response_manager(manager)
     return manager
 
 # Read manager by department and name
 def select_manager_by_dept_and_name(name: str, dept_id:int)-> Optional[schemas.Manager]:
     manager = models.Manager.filter(models.Manager.name == name, models.Manager.dept_id == dept_id).first()
-    manager = response_manager(manager)
+    if manager:
+        manager = response_manager(manager)
     return manager
 
 # Read managers by department
