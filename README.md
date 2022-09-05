@@ -54,9 +54,9 @@ fastapi-postgresql
 - [`TestPlan.md`](/fastapi-postgresql/sqlalchemy_app/TestPlan.md) : Test plan records for `main.py`. Ordered by table, operation.
 
 ### `peewee_app`
-<!-- - [`crud.py`](/fastapi-postgresql/peewee_app/crud.py): All CRUD functions and make main file more readable. -->
+- [`crud.py`](/fastapi-postgresql/peewee_app/crud.py): All CRUD functions and make main file more readable.
 - [`database.py`](/fastapi-postgresql/peewee_app/database.py):  Establish a Peewee db connection configure.
 - [`main.py`](/fastapi-postgresql/peewee_app/main.py) : Main entrance, all path and corresponding operations.
 - [`models.py`](/fastapi-postgresql/peewee_app/models.py) : Create database models to represent db tables.
 - [`schemes.py`](/fastapi-postgresql/peewee_app/schemes.py) : Pydantic data schemas to handle data validation and data structure, make main file more readable.
-<!-- - [`TestPlan.md`](/fastapi-postgresql/peewee_app/TestPlan.md) : Test plan records for `main.py`. Ordered by table, operation. -->
+- [`TestPlan.md`](/fastapi-postgresql/peewee_app/TestPlan.md) : Test plan records for `main.py`. Ordered by table, operation.

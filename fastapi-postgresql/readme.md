@@ -22,6 +22,9 @@ The [`TestPlan`](/fastapi-postgresql/sqlalchemy_app/TestPlan.md) file records te
 
 Where `main` is the file name(`peewee_app. `with src), `app` is the name of app variable and `— reload` will restart server anytime when make a change to the code and should only be used in development.
 
+### Test Records
+The [`TestPlan`](/fastapi-postgresql/peewee_app/TestPlan.md) file records test plans for [`peewee_app/main.py`](/fastapi-postgresql/peewee_app/main.py). Ordered by table, operation.
+
 
 ## Swagger UI and ReDoc
 Advantages of FastAPI is it provides interactive API documentations.
@@ -29,8 +32,6 @@ Advantages of FastAPI is it provides interactive API documentations.
     Every routes will be list out and can be used for easily debugging and testing. Click the available route, then click "**Try it out**" and then "**Execute**".
 - Add `/redoc` at hte end of route, can go to the API provided by *ReDoc*: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
-
-<br> 
 ---
 
 # Notes part
@@ -91,16 +92,20 @@ The code implements does not include simulates long processing request in multip
 ### sqlalchemy
 - in post option 3, using docs, you will see `"string"` in the initial request body, and you have to specify the data structure in request body as you wish, like `{"user" : "test user in body"}`. Notice that when specified, use **" " double quotes** and not single quotes to ensure the string is able to be parsed on the receiving end.
 <br>
+
 - `sqlalchemy.orm.Query.all()`:Return the results represented by this Query as a list.
 <br>
+
 - `join()` will attempt to create a JOIN along the **natural foreign key relationship** between two entities or you can explicitly specify ON clause with `session.query(A).join(B, A.id==B.a_id)`. Add `isouter = True` to join query to implement left join.
 <br>
+
 - `limit()` and `offset()` apply LIMIT and OFFSET to the query and return the newly resulting Query, used when want to retrieve only a few records from query result. LIMIT will retrieve only the number of records specified after the LIMIT keyword, unless the query itself returns fewer records than the number specified by LIMIT. OFFSET is used to skip the number of records from the results.
 <br>
 
 ### peewee
 - in select, if a record does not exist, `.get()` will raise exception `<model_name>DoesNotExist`, but `.first()` will return `None`.
 <br>
+
 - for select return not match `response_model`
     ```python
     obj=Department.filter(Department.name == "IT").first()
