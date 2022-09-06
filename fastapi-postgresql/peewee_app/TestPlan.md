@@ -70,9 +70,9 @@ This file records the test plan for [`main.py`](/fastapi-postgresql/sqlalchemy_a
 |:--:|------|----------------|------------|------|-------|
 |1|[8, {"name": "HR"}]|<mark>400 Bad Request</mark>, {"detail":<mark>"Department already existed"</mark>}|~~500 Internal Server Error~~, {"detail":~~""~~}|Fail|commented `except Exception as e:`|
 |2|[8, {"name": "HR"}]|{"detail":"Department already existed"}|{"detail":"Department already existed"}|Pass||
-|2|[8, {"name": "test"}]|{"name": <mark>"test"</mark>,"id": 8,"has_managers": [],"has_employees": []}|{"name":~~"IT"~~,"id": 8,"has_managers": [],"has_employees": []}|Fail|db changed, wrong response body message, change return variable|
-|2|[8, {"name": "test"}]|{"name": "test","id": 8,"has_managers": [],"has_employees": []}|{"name": "test","id": 8,"has_managers": [],"has_employees": []}|Pass||
-|3|[7,{"name": "dept not exist"}]|{"detail":"Department not found"}|{"detail":"Department not found"}|Pass||
+|3|[8, {"name": "test"}]|{"name": <mark>"test"</mark>,"id": 8,"has_managers": [],"has_employees": []}|{"name":~~"IT"~~,"id": 8,"has_managers": [],"has_employees": []}|Fail|db changed, wrong response body message, change return variable|
+|4|[8, {"name": "test"}]|{"name": "test","id": 8,"has_managers": [],"has_employees": []}|{"name": "test","id": 8,"has_managers": [],"has_employees": []}|Pass||
+|5|[7,{"name": "dept not exist"}]|{"detail":"Department not found"}|{"detail":"Department not found"}|Pass||
 
 
 
