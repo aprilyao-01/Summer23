@@ -124,5 +124,6 @@ The code implements does not include simulates long processing request in multip
     false
     ```
 this is because peewee use **`lazy loading`**, two options to fix this:
-    1. when specify `ForeignKeyField`, set parameter`lazy_load = False`, see [`ForeignKeyField` document](https://docs.peewee-orm.com/en/latest/peewee/api.html#ForeignKeyField) for example. Need to notice that, however, if we eagerly load the related object, then the foreign key will behave like usual, see [example code](http://docs.peewee-orm.com/en/latest/peewee/models.html?highlight=table%20generation#foreignkeyfield).
-    2. when querying, put a `list` around the attribute you want, see [`crud.py`](/fastapi-postgresql/peewee_app/crud.py)
+
+1. when specify `ForeignKeyField`, set parameter`lazy_load = False`, see [`ForeignKeyField` document](https://docs.peewee-orm.com/en/latest/peewee/api.html#ForeignKeyField) for example. Need to notice that, however, if we eagerly load the related object, then the foreign key will behave like usual, see [example code](http://docs.peewee-orm.com/en/latest/peewee/models.html?highlight=table%20generation#foreignkeyfield).
+2. when querying, put a `list` around the attribute you want, see [`crud.py`](/fastapi-postgresql/peewee_app/crud.py)
