@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake company</title>
+    <title>Fake Company</title>
 
-    <link rel="stylesheet" href="main.css">        <!-- link to css style file-->
+    <link rel="stylesheet" href="./style.css">        <!-- link to css style file-->
 </head>
 <body>
     <header>
-        <h1>Fake company</h1>
-        <h2>Since summer 2023 &#129299 Looking for partners &#129309</h2>
+        <h1>Fake Company</h1>
+        <h2>Since summer 2023 &#129299 &nbsp &nbsp Looking for partners &#129309</h2>
         <!-- <h2>Looking for partner!</h2> -->
         <!-- <div style="clear: both">
             <h2 style="float: left">Begin in summer 2023</h2>
@@ -23,9 +23,10 @@
             <input type = "text" 
                     id="new-employee-input"
                     placeholder="Hire someone to work for you (for free) :)">
-            <input type="submit"            
+            <!-- <input type="submit"            
                     id="new-employee-submit"
-                    value="Add employ">      <!-- TODO: submit button goes here -->
+                    value="Add employee">  -->
+            <button type="submit" id="new-employee-submit"> Add employee </button>
         </form>
     </header>
 
@@ -34,9 +35,10 @@
             <h2>Employees name</h2>
 
             <div id="employees">
+                <ul class="employee"></ul>
 
-                <!-- TS/JS take control this-->
-                <div class="employee">
+                <!-- TS/JS take control in here-->
+                <!-- <div class="employee">
                     <div class="content">
                         <input type="text"
                                 class="text"
@@ -48,7 +50,7 @@
                         <button class="edit">Edit</button>
                         <button class="delete">Delete</button>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- <div class="employee">
                     <div class="content">
@@ -68,6 +70,6 @@
         </section>
     </main>
 
-    <script src="main.js"></script>
+    <script src="./main.js"></script>
 </body>
 </html>

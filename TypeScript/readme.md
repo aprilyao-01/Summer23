@@ -159,6 +159,18 @@ promiseButAsync()
 - `await` tells JS the code should wait until this await function (in this case `makePromise`) is finished, then afterward execute the next thing. Once JS hits the `await` statement, it'll leave the function, do other work inside of the program and as soon as the await function finishes executing it'll come back to where  await function is and return the result to variable `message`.
 - `try...catch...`  along side the `await` will run code like `.then.catch` but easier to reason with and looks more like synchronous code even though it's actually asynchronous code.
 
+### Type Casting
+JS doesn’t have a concept of type casting because variables have dynamic types. However, TS variables have type, can use the `as` keyword or `<>` operator for type castings to convert a variable from one type to another.
+- Casting use `as`:
+```JS
+const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+console.log(input.value);
+```
+- Casting use `<>`:
+```JS
+const input = <HTMLInputElement> document.querySelector('input[type="text"]');
+console.log(input.value);
+```
 
 ### TypeScript online editor
 The TS online editor：[TypeScript Playground](https://www.typescriptlang.org/play?#code/Q)

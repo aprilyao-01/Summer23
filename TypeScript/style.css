@@ -137,6 +137,7 @@ main{
     color: var(--gray);         /*change colour if it's not readonly*/
 }
 
+/* delete actions from below */
 #employees .employee .actions {
     display: flex;
     margin: 0 -0.5rem;
