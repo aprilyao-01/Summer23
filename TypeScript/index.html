@@ -4,19 +4,70 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        #list {
-            list-style: none;
-            padding: 0;
-        }
-    </style>
+    <title>Fake company</title>
+
+    <link rel="stylesheet" href="main.css">        <!-- link to css style file-->
 </head>
 <body>
-    <ul id="list">Test</ul>
-    <form id="new-task-form">
-        <input type="text" id="new-task-title">
-        <button type="submit">Add</button>
-    </form>
+    <header>
+        <h1>Fake company</h1>
+        <h2>Since summer 2023 &#129299 Looking for partners &#129309</h2>
+        <!-- <h2>Looking for partner!</h2> -->
+        <!-- <div style="clear: both">
+            <h2 style="float: left">Begin in summer 2023</h2>
+            <h3 style="float: right">Looking for partner!</h3>
+        </div>
+        <hr /> -->
+
+        <form id = "new-employee-form">         <!-- to submit new employee -->
+            <input type = "text" 
+                    id="new-employee-input"
+                    placeholder="Hire someone to work for you (for free) :)">
+            <input type="submit"            
+                    id="new-employee-submit"
+                    value="Add employ">      <!-- TODO: submit button goes here -->
+        </form>
+    </header>
+
+    <main>
+        <section class="employee-list">     <!-- to display all employees -->
+            <h2>Employees name</h2>
+
+            <div id="employees">
+
+                <!-- TS/JS take control this-->
+                <div class="employee">
+                    <div class="content">
+                        <input type="text"
+                                class="text"
+                                value="One shiny employee"
+                                readonly
+                        >
+                    </div>
+                    <div class="actions"> 
+                        <button class="edit">Edit</button>
+                        <button class="delete">Delete</button>
+                    </div>
+                </div>
+
+                <!-- <div class="employee">
+                    <div class="content">
+                        <input type="text"
+                                class="text"
+                                value="Two shiny employee"
+                                readonly
+                        >
+                    </div>
+                    <div class="actions"> 
+                        <button class="edit">Edit</button>
+                        <button class="delete">Delete</button>
+                    </div>
+                </div> -->
+
+            </div>
+        </section>
+    </main>
+
+    <script src="main.js"></script>
 </body>
 </html>

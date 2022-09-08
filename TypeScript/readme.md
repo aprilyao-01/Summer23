@@ -1,6 +1,6 @@
 # Read Me
 ## Run the code
-in terminal, `tsc greeter.ts` -> generate a `greeter.js` javascript file that have same functionality. Create a `html` file to run this js code and open it in browser.
+Go to terminal, run `$ tsc main.ts` first. This will generate the **latest edit version of** `main.js` javascript file that have same functionality. Double click `index.html` file to open it in browser.
 
 # TypeScript
 ## TypeScript vs JavaScript
@@ -57,7 +57,7 @@ For Optional properties, object types can also specify that some or all of their
   }
   // Both OK
   printName({ first: "Bob" });
-  printName({ first: "Alice", last: "Alisson" });
+  printName({ first: "Alice", last: "Alison" });
   ```
 
 In JavaScript, if you access a property that doesn’t exist, you’ll get the value `undefined` rather than a runtime error. Because of this, when you *read* from an optional property, you’ll have to check for `undefined` before using it.
@@ -177,6 +177,5 @@ Another online editor for TS： [playcode.io](https://playcode.io/typescript/)
 
 
 
-
-
-
+# React
+React is a JavaScript library for building user interfaces.
