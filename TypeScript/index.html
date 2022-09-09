@@ -20,6 +20,17 @@
         <hr /> -->
 
         <form id = "new-employee-form">         <!-- to submit new employee -->
+            <div class="dropdown">
+                <div class="select">
+                    <span class="selected">Employee</span>
+                    <div class="icon">&#128317</div>
+                </div>
+                <ul class="menu">
+                    <li>Department</li>
+                    <li>Manager</li>
+                    <li class="active">Employee</li>
+                </ul>
+            </div>
             <input type = "text" 
                     id="new-employee-input"
                     placeholder="Hire someone to work for you (for free) :)">
@@ -35,10 +46,10 @@
             <h2>Employees name</h2>
 
             <div id="employees">
-                <ul class="employee"></ul>
+                <!-- <ul class="employee"></ul> -->
 
                 <!-- TS/JS take control in here-->
-                <!-- <div class="employee">
+                <div class="employee">
                     <div class="content">
                         <input type="text"
                                 class="text"
@@ -50,7 +61,7 @@
                         <button class="edit">Edit</button>
                         <button class="delete">Delete</button>
                     </div>
-                </div> -->
+                </div>
 
                 <!-- <div class="employee">
                     <div class="content">

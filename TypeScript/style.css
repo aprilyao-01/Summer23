@@ -29,6 +29,7 @@ header{
     max-width: 800px;
     width: 100%;
     margin: 0 auto;    /*center header*/
+    margin-bottom: 5rem;
 }
 
 header h1 {
@@ -98,7 +99,7 @@ main{
     /* padding: 2rem 1rem; */
     max-width: 800px;
     width: 100%;
-    margin: 0 auto;
+    margin-top: 1rem;
 }
 
 .employee-list{
@@ -171,4 +172,90 @@ main{
 
 .employee .actions .delete {
     color: var(--alert);
+}
+
+/* fall style in TS */
+.employee-fall {
+    transition: 0.5s;
+    transform: translateY(8rem) rotateZ(20deg);
+    opacity: 0;
+}
+
+.dropdown {
+    position: relative;
+    /* margin-right: 1rem; */
+    /* margin: 0.5rem; */
+    min-width: 7rem;
+}
+
+.select {
+    color: var(--purple);
+    /* align-items: center; */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+}
+
+/* clicked styles in TS */
+.select-clicked {
+    border: 2px --purple solid;
+    box-shadow: 0 0 0.5em var(--pink);
+}
+
+.select:hover {
+    opacity: 0.7;
+}
+
+.icon {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid --light;
+    transition: 0.2s;
+}
+
+/* rotate style in TS */
+.icon-rotate{
+    transform: rotate(180deg);   /*upside down*/
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+    border: 1px ;
+    box-shadow: 0 0 0.5em var(--pink);
+    border-radius: 0.5rem;
+    position: absolute;
+    top: 2.5rem;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+    opacity: 0;
+    display: none;
+    transition: 0.2s;
+    z-index: 1;
+}
+
+.menu li {
+    padding: 0.7em 0.5em;
+    margin: 0.3em 0;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.menu li:hover {
+    opacity: 0.7;
+}
+
+/* active style in TS */
+.active{
+    color: var(--purple);
+    /* opacity: 0.7; */
+}
+
+/* open style in TS */
+.menu-open {
+    display: block;
+    opacity: 1;
 }
