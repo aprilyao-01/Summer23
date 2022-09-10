@@ -96,7 +96,7 @@ input, button {             /*cancel all pre-defined*/
 
 main{
     flex: 1 1 0%;
-    /* padding: 2rem 1rem; */
+    margin: 0 auto;    /*center*/
     max-width: 800px;
     width: 100%;
     margin-top: 1rem;

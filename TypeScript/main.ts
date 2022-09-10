@@ -1,21 +1,15 @@
 // ----- Selector -----
-const form : HTMLElement | null = document.querySelector('#new-employee-form');        // selects the first input element
+const form = document.querySelector('#new-employee-form') as HTMLInputElement;        // selects the first input element
 const input = document.querySelector('#new-employee-input') as HTMLInputElement;
-const list_element = document.querySelector('#employees');
-const header = document.querySelector('header');
+const list_element = document.querySelector('#employees') as HTMLInputElement;
+const header = document.querySelector('header') as HTMLInputElement;
 const dropdowns = document.querySelectorAll<HTMLElement>('.dropdown');
 
 // ----- Event Listeners -----
-document.addEventListener('DOMContentLoaded', getLocalName);        // get back all local storage when dom content loaded
-
-if (form) { 
-    form.addEventListener('submit', addNew); 
-}
-
-
-if (list_element) {
-    list_element.addEventListener('click', editNDelete);
-}
+// get back all local storage when dom content loaded
+document.addEventListener('DOMContentLoaded', getLocalName); 
+form.addEventListener('submit', addNew);
+list_element.addEventListener('click', editNDelete);
 
 // dropdown menu event listener
 dropdowns.forEach(dropdown => {
@@ -49,7 +43,6 @@ dropdowns.forEach(dropdown => {
 
 
 // ----- Functions -----
-
 // create element and add to class
 function createElWithClass(newEl:string, newClass:string) {
     const current = document.createElement(newEl)
@@ -120,28 +113,19 @@ function addNew(e: Event) {
 }
 
 
-function removeLocalName(element: HTMLElement){
-    console.log("removelocal:" + element);
-    const employee_input = <HTMLInputElement>element.querySelector('.text');
-    const  nameIndex = employee_input.value;
-    // console.log("text:" + employee_input.value);
-    // let names: string[] = [];       // list of input text
-    // console.log(typeof(names));
-    // console.log("names: " + names);
+// remove name from local storage
+function removeLocalName(name: string){
+    let names: string[] = [];       // list of input text
+    const local_name = localStorage.getItem('names');
 
-    // const local_name = localStorage.getItem('names');
-    // console.log(typeof(local_name));
-    // console.log("local_name: " + local_name);
+    if (local_name === null) {
+        names = [];         // if doesn't exist, create empty list
+    } else {
+        names = JSON.parse(local_name);
+    }
 
-    // if (local_name === null) {
-    //     names = [];         // if doesn't exist, create empty list
-    // } else {
-    //     names = JSON.parse(local_name);
-    // }
-
-    // const nameIndex = <HTMLElement>element.children[0].innerText;
-    // names.splice(names.indexOf(nameIndex), 1);
-    // localStorage.setItem("names", JSON.stringify(names));
+    names.splice(names.indexOf(name), 1);
+    localStorage.setItem("names", JSON.stringify(names));
 }
 
 
@@ -151,6 +135,7 @@ function editNDelete(e:Event){
     const item = <HTMLElement> e.target;
     const employee_action = <HTMLElement>item.parentElement;
     const employee_element = <HTMLElement>employee_action.parentElement;
+    const employee_input = <HTMLInputElement>employee_element.querySelector('.text');
 
     if (item.classList[0] === 'delete') {  
         console.log("in delete");
@@ -159,7 +144,7 @@ function editNDelete(e:Event){
             employee_element.classList.toggle('employee-fall');      // add animation
             console.log("employee_element: " + employee_element.className);
             employee_element.addEventListener('transitionend', function(){
-                removeLocalName(employee_element);
+                removeLocalName(employee_input.value);
                 employee_element.remove();      // remove after transition end
             })
             
@@ -167,7 +152,6 @@ function editNDelete(e:Event){
     }
 
     if (item.classList[0] === 'edit') {  
-        const employee_input = <HTMLInputElement>employee_element.querySelector('.text');
         if (employee_input.readOnly) {
             employee_input.removeAttribute('readonly');
             employee_input.focus();
@@ -182,20 +166,12 @@ function editNDelete(e:Event){
 
 // save input to local storage
 function saveLocalName(newName: string){
-    console.log("save Local Name here");
     let names: string[] = [];       // array of input text
-    
     const local_name = localStorage.getItem('names');
     
     if(local_name !== null){
-        // console.log(typeof(local_name));
-        // console.log("local_name: " + local_name);
-
         names = JSON.parse(local_name);     // make sure it's not null
-        // console.log(typeof(names));
-        // console.log(names);
     } else {
-        // console.log("local name is empty");
         names = [];         // if doesn't exist, create empty list
     }
     names.push(newName);
@@ -205,24 +181,13 @@ function saveLocalName(newName: string){
 // get local storage name and recreate the UI
 function getLocalName(){
     let names: string[] = [];       // list of input text
-    // console.log(typeof(names));
-    // console.log("names: " + names);
-
     const local_name = localStorage.getItem('names');
-    // console.log(typeof(local_name));
-    // console.log("local_name: " + local_name);
 
     if(local_name === null){
         names = [];         // if doesn't exist, create empty list
     } else {
-        // const local_name = localStorage.getItem('names');
-        // if (local_name){
-            names = JSON.parse(local_name);     // make sure it's not null and get it back
-            // BUG TO FIX: names is string instead of array
-        // }
+        names = JSON.parse(local_name);     // make sure it's not null and get it back
     }
-    console.log(typeof(names));
-    console.log("names in get" + names);
 
     for (let name of names) {       // replaced forEach
         const employee_element = createElWithClass('div', 'employee');

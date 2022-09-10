@@ -5,13 +5,10 @@ var list_element = document.querySelector('#employees');
 var header = document.querySelector('header');
 var dropdowns = document.querySelectorAll('.dropdown');
 // ----- Event Listeners -----
-document.addEventListener('DOMContentLoaded', getLocalName); // get back all local storage when dom content loaded
-if (form) {
-    form.addEventListener('submit', addNew);
-}
-if (list_element) {
-    list_element.addEventListener('click', editNDelete);
-}
+// get back all local storage when dom content loaded
+document.addEventListener('DOMContentLoaded', getLocalName);
+form.addEventListener('submit', addNew);
+list_element.addEventListener('click', editNDelete);
 // dropdown menu event listener
 dropdowns.forEach(function (dropdown) {
     var select = dropdown.querySelector('.select');
@@ -89,25 +86,18 @@ function addNew(e) {
     saveLocalName(employee);
     input.value = ''; // clean the value after append
 }
-function removeLocalName(element) {
-    console.log("removelocal:" + element);
-    var employee_input = element.querySelector('.text');
-    var nameIndex = employee_input.value;
-    // console.log("text:" + employee_input.value);
-    // let names: string[] = [];       // list of input text
-    // console.log(typeof(names));
-    // console.log("names: " + names);
-    // const local_name = localStorage.getItem('names');
-    // console.log(typeof(local_name));
-    // console.log("local_name: " + local_name);
-    // if (local_name === null) {
-    //     names = [];         // if doesn't exist, create empty list
-    // } else {
-    //     names = JSON.parse(local_name);
-    // }
-    // const nameIndex = <HTMLElement>element.children[0].innerText;
-    // names.splice(names.indexOf(nameIndex), 1);
-    // localStorage.setItem("names", JSON.stringify(names));
+// remove name from local storage
+function removeLocalName(name) {
+    var names = []; // list of input text
+    var local_name = localStorage.getItem('names');
+    if (local_name === null) {
+        names = []; // if doesn't exist, create empty list
+    }
+    else {
+        names = JSON.parse(local_name);
+    }
+    names.splice(names.indexOf(name), 1);
+    localStorage.setItem("names", JSON.stringify(names));
 }
 // edit employee name or delete the employee
 function editNDelete(e) {
@@ -115,6 +105,7 @@ function editNDelete(e) {
     var item = e.target;
     var employee_action = item.parentElement;
     var employee_element = employee_action.parentElement;
+    var employee_input = employee_element.querySelector('.text');
     if (item.classList[0] === 'delete') {
         console.log("in delete");
         if (confirm('Are you sure to kick this person out?')) {
@@ -122,13 +113,12 @@ function editNDelete(e) {
             employee_element.classList.toggle('employee-fall'); // add animation
             console.log("employee_element: " + employee_element.className);
             employee_element.addEventListener('transitionend', function () {
-                removeLocalName(employee_element);
+                removeLocalName(employee_input.value);
                 employee_element.remove(); // remove after transition end
             });
         }
     }
     if (item.classList[0] === 'edit') {
-        var employee_input = employee_element.querySelector('.text');
         if (employee_input.readOnly) {
             employee_input.removeAttribute('readonly');
             employee_input.focus();
@@ -143,18 +133,12 @@ function editNDelete(e) {
 }
 // save input to local storage
 function saveLocalName(newName) {
-    console.log("save Local Name here");
     var names = []; // array of input text
     var local_name = localStorage.getItem('names');
     if (local_name !== null) {
-        // console.log(typeof(local_name));
-        // console.log("local_name: " + local_name);
         names = JSON.parse(local_name); // make sure it's not null
-        // console.log(typeof(names));
-        // console.log(names);
     }
     else {
-        // console.log("local name is empty");
         names = []; // if doesn't exist, create empty list
     }
     names.push(newName);
@@ -163,23 +147,13 @@ function saveLocalName(newName) {
 // get local storage name and recreate the UI
 function getLocalName() {
     var names = []; // list of input text
-    // console.log(typeof(names));
-    // console.log("names: " + names);
     var local_name = localStorage.getItem('names');
-    // console.log(typeof(local_name));
-    // console.log("local_name: " + local_name);
     if (local_name === null) {
         names = []; // if doesn't exist, create empty list
     }
     else {
-        // const local_name = localStorage.getItem('names');
-        // if (local_name){
         names = JSON.parse(local_name); // make sure it's not null and get it back
-        // BUG TO FIX: names is string instead of array
-        // }
     }
-    console.log(typeof (names));
-    console.log("names in get" + names);
     for (var _i = 0, names_1 = names; _i < names_1.length; _i++) { // replaced forEach
         var name_1 = names_1[_i];
         var employee_element = createElWithClass('div', 'employee');
