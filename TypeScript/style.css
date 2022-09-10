@@ -176,7 +176,7 @@ main{
 
 /* fall style in TS */
 .employee-fall {
-    transition: 0.5s;
+    transition: 1s;
     transform: translateY(8rem) rotateZ(20deg);
     opacity: 0;
 }

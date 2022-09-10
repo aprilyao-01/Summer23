@@ -89,6 +89,26 @@ function addNew(e) {
     saveLocalName(employee);
     input.value = ''; // clean the value after append
 }
+function removeLocalName(element) {
+    console.log("removelocal:" + element);
+    var employee_input = element.querySelector('.text');
+    var nameIndex = employee_input.value;
+    // console.log("text:" + employee_input.value);
+    // let names: string[] = [];       // list of input text
+    // console.log(typeof(names));
+    // console.log("names: " + names);
+    // const local_name = localStorage.getItem('names');
+    // console.log(typeof(local_name));
+    // console.log("local_name: " + local_name);
+    // if (local_name === null) {
+    //     names = [];         // if doesn't exist, create empty list
+    // } else {
+    //     names = JSON.parse(local_name);
+    // }
+    // const nameIndex = <HTMLElement>element.children[0].innerText;
+    // names.splice(names.indexOf(nameIndex), 1);
+    // localStorage.setItem("names", JSON.stringify(names));
+}
 // edit employee name or delete the employee
 function editNDelete(e) {
     console.log(e.target);
@@ -96,9 +116,13 @@ function editNDelete(e) {
     var employee_action = item.parentElement;
     var employee_element = employee_action.parentElement;
     if (item.classList[0] === 'delete') {
+        console.log("in delete");
         if (confirm('Are you sure to kick this person out?')) {
+            console.log("employee_element: " + employee_element.className);
             employee_element.classList.toggle('employee-fall'); // add animation
+            console.log("employee_element: " + employee_element.className);
             employee_element.addEventListener('transitionend', function () {
+                removeLocalName(employee_element);
                 employee_element.remove(); // remove after transition end
             });
         }
@@ -119,36 +143,42 @@ function editNDelete(e) {
 }
 // save input to local storage
 function saveLocalName(newName) {
+    console.log("save Local Name here");
     var names = []; // array of input text
-    console.log(typeof (names));
-    console.log(names);
-    if (localStorage.getItem('names') === null) {
-        names = []; // if doesn't exist, create empty list
+    var local_name = localStorage.getItem('names');
+    if (local_name !== null) {
+        // console.log(typeof(local_name));
+        // console.log("local_name: " + local_name);
+        names = JSON.parse(local_name); // make sure it's not null
+        // console.log(typeof(names));
+        // console.log(names);
     }
     else {
-        // const local_name = ;
-        // if (local_name){
-        names = JSON.parse(localStorage.getItem('names')); // make sure it's not null
-        // }
+        // console.log("local name is empty");
+        names = []; // if doesn't exist, create empty list
     }
-    console.log(typeof (names));
-    console.log(names);
-    // const names = Object.assign([], names);
     names.push(newName);
-    localStorage.setItem('names', JSON.stringify('names')); // set back to local storage
+    localStorage.setItem('names', JSON.stringify(names)); // set back to local storage
 }
 // get local storage name and recreate the UI
 function getLocalName() {
     var names = []; // list of input text
-    if (localStorage.getItem('names') === null) {
+    // console.log(typeof(names));
+    // console.log("names: " + names);
+    var local_name = localStorage.getItem('names');
+    // console.log(typeof(local_name));
+    // console.log("local_name: " + local_name);
+    if (local_name === null) {
         names = []; // if doesn't exist, create empty list
     }
     else {
-        var local_name = localStorage.getItem('names');
-        if (local_name) {
-            names = JSON.parse(local_name); // make sure it's not null and get it back
-        }
+        // const local_name = localStorage.getItem('names');
+        // if (local_name){
+        names = JSON.parse(local_name); // make sure it's not null and get it back
+        // BUG TO FIX: names is string instead of array
+        // }
     }
+    console.log(typeof (names));
     console.log("names in get" + names);
     for (var _i = 0, names_1 = names; _i < names_1.length; _i++) { // replaced forEach
         var name_1 = names_1[_i];

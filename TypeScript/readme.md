@@ -177,7 +177,15 @@ The TS online editor：[TypeScript Playground](https://www.typescriptlang.org/pl
 Another online editor for TS： [playcode.io](https://playcode.io/typescript/)
 
 
-
+### `LocalStorage`
+- Save some data to 'key'
+`localStorage.setItem('key', 'data');`
+- Get the data from the 'key'
+`const data = localStorage.getItem('key');`
+- Remove specific key
+`localStorage.removeItem('key');`
+- Clear all data in the storage
+`localStorage.clear();`
 
 
 ### others
