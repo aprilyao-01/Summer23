@@ -183,15 +183,15 @@ main{
 
 .dropdown {
     position: relative;
-    /* margin-right: 1rem; */
-    /* margin: 0.5rem; */
+    margin-right: 0.5rem;
     min-width: 7rem;
 }
 
 .select {
     color: var(--purple);
-    /* align-items: center; */
-    padding: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
     transition: 0.3s;
@@ -200,7 +200,6 @@ main{
 
 /* clicked styles in TS */
 .select-clicked {
-    border: 2px --purple solid;
     box-shadow: 0 0 0.5em var(--pink);
 }
 
@@ -209,9 +208,12 @@ main{
 }
 
 .icon {
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid --light;
+    position: absolute;
+    left: 80%;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--light);
+    margin: 8px 2px 8px 2px;
     transition: 0.2s;
 }
 
@@ -223,11 +225,9 @@ main{
 .menu {
     list-style: none;
     padding: 0;
-    border: 1px ;
     box-shadow: 0 0 0.5em var(--pink);
     border-radius: 0.5rem;
     position: absolute;
-    top: 2.5rem;
     left: 50%;
     width: 100%;
     transform: translateX(-50%);
@@ -238,8 +238,7 @@ main{
 }
 
 .menu li {
-    padding: 0.7em 0.5em;
-    margin: 0.3em 0;
+    padding: 0.7rem;
     border-radius: 0.5rem;
     cursor: pointer;
 }
@@ -251,7 +250,6 @@ main{
 /* active style in TS */
 .active{
     color: var(--purple);
-    /* opacity: 0.7; */
 }
 
 /* open style in TS */
