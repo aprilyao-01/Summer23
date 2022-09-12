@@ -194,8 +194,3 @@ Another online editor for TS： [playcode.io](https://playcode.io/typescript/)
 3. `$ npm install --save-dev typescript` install and save develop dependencies in package file.
 4. `$ npx tsc --init` gives a boilerplate TS config file
 5. `src` put TS file, `dest` put JS file that been transformed
-
-
-
-# React
-React is a JavaScript library for building user interfaces.
