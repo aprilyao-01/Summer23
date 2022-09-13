@@ -36,6 +36,7 @@ Required: `Node >= 14.0.0` and `npm >= 5.6`.
 
 1. Check if `Node` installed by run  `$ node -v` in terminal. If doesn't show version or show error, then go to https://nodejs.org/en/ and install first.
 2. Run `$ npx create-react-app .` which use the current folder and create application inside of it. To specify the target folder, replace the `.` with target folder name. After a long time waiting, it will shows `Success! Created react-app at <folder path>` which means the app is created successfully.
+    - Or run `$npx create-react-app . --template typescript` to create a new  React app project with TS.
 3. Inside that directory, you can run several commands:
     - `npm start` to starts the **development** server (i.e. runs the app in the development mode). Recommend begin with this command.
     - `npm run build`: Bundles the app into static files for **production**.
@@ -308,3 +309,85 @@ root.render(<Clock />);
 Handling events with React elements is very similar to handling events on DOM elements. There are some syntax differences:
 - React events are named using **camelCase**, rather than lowercase.
 - With JSX you pass a **function** as the event handler, rather than a string.
+
+When using React, generally don’t need to call `addEventListener` to add listeners to a DOM element after it is created. Instead, just provide a listener when the element is **initially rendered**.
+```jsx
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
+  }
+}
+```
+
+Passing Arguments to Event Handlers: Inside a loop, it is common to want to pass an extra parameter to an event handler. For example, if id is the row ID, either of the following would work.
+```jsx
+<button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
+<button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
+```
+
+## Conditional Rendering
+In React, distinct components can encapsulate distinct behaviors. Depending on the state of the application, can render only some of them.
+Conditional rendering in React works the same way conditions work in JavaScript. Use JavaScript operators like `if` or the `conditional operator` to create elements representing the current state, and let React update the UI to match them.
+```jsx
+function UserGreeting(props) {
+  return <h1>Welcome back!</h1>;
+}
+
+function GuestGreeting(props) {
+  return <h1>Please sign up.</h1>;
+}
+
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+  
+  // same as
+  // return( <div> {isLoggedIn  ?<UserGreeting />  : <GuestGreeting /> } </div>)
+  
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root')); 
+// Try changing to isLoggedIn={true}:
+root.render(<Greeting isLoggedIn={false} />);
+```
+
+Inline If with Logical `&&` Operator: embed expressions in JSX by wrapping them in `curly braces { }`. This includes the JS logical `&&` operator. It can be handy for conditionally including an element. If the condition is `true`, the element right after `&&` will appear in the output. If it is `false`, React will **ignore and skip** it.
+```jsx
+function Mailbox(props) {
+  const unreadMessages = props.unreadMessages;
+  return (
+    <div>
+      <h1>Hello!</h1>
+      {unreadMessages.length > 0 &&
+        <h2>
+          You have {unreadMessages.length} unread messages.
+        </h2>
+      }
+    </div>
+  );
+}
+```
+
+## Thinking in React
+How to decide components, for example, build a searchable product data table using React. See https://reactjs.org/docs/thinking-in-react.html.
