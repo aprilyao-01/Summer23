@@ -29,8 +29,7 @@ react-app
 ## React
 React is a JavaScript library for building user interfaces.
 
-## Begin
-### Create a New React App using `Create React App`
+## Create a New React App using `Create React App`
 `Create React App` is the best way to start building a new **single-page application** in React. 
 Required: `Node >= 14.0.0` and `npm >= 5.6`.
 
@@ -391,3 +390,42 @@ function Mailbox(props) {
 
 ## Thinking in React
 How to decide components, for example, build a searchable product data table using React. See https://reactjs.org/docs/thinking-in-react.html.
+
+## Define Object/Function in React with TS
+### Define Object
+```tsx
+// define object type
+type Person = {
+  name: string;
+  age?: number;       // ? means it's optional
+}
+
+interface Person2 {     // can also define an object use interface
+  name: string;
+  age?: number;
+}
+
+type StrongPerson = Person & {      // contain what Person has and extra stuff
+  height: number;
+  strong: boolean;
+}
+
+interface StrongPerson2 extends Person2 {       // inheritance
+  strong: boolean;
+}
+
+type PersonPlus = StrongPerson2 & {     // type with interface
+  weight : number;
+}
+
+interface PersonPlus2 extends StrongPerson {        // interface extends type
+  weight: number;
+}
+```
+
+### Define Function 
+```tsx
+// define function type
+let printName : (name: string) => void;     // functionName: (variable : varType) => returnType
+let printName2 : (name: string) => never;     // void return undefined, never doesn't return anything
+```
