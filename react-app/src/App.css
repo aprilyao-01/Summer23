@@ -6,7 +6,7 @@
     --gray: #5e626a;
     --pink: #EC4899;
     --purple: #8B5CF6;
-    --alert: #E74C3C;
+    --alert: #e74c3c;
     --safe: #2ECC71;
 }
 
@@ -267,4 +267,8 @@ main{
 
 .emoji {
     margin-left: 0.3rem;
+}
+
+#alert {
+    color: var(--alert);
 }

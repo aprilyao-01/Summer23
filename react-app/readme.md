@@ -36,10 +36,9 @@ Required: `Node >= 14.0.0` and `npm >= 5.6`.
 1. Check if `Node` installed by run  `$ node -v` in terminal. If doesn't show version or show error, then go to https://nodejs.org/en/ and install first.
 2. Run `$ npx create-react-app .` which use the current folder and create application inside of it. To specify the target folder, replace the `.` with target folder name. After a long time waiting, it will shows `Success! Created react-app at <folder path>` which means the app is created successfully.
     - Or run `$npx create-react-app . --template typescript` to create a new  React app project with TS.
-3. Inside that directory, you can run several commands:
+3. Inside that directory, several commands can run:
     - `npm start` to starts the **development** server (i.e. runs the app in the development mode). Recommend begin with this command.
-    - `npm run build`: Bundles the app into static files for **production**.
-    and scripts into the app directory. If you do this, you can’t go back!
+    - `npm run build`: Bundles the app into static files for **production** and scripts into the app directory. :warning: If do this, **can’t go back!**
 4. Runs the app in the development mode by `$ npm start` and open [http://localhost:3000](http://localhost:3000) to view it in browser.
 
 5. To get blank application :
@@ -102,10 +101,14 @@ Also, React DOM compares the element and its children to the previous one, and *
 ### Components
 Components let developer split the UI into **independent**, **reusable** pieces, and think about each piece in isolation. Conceptually, components are like JS functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
 ```jsx
-/* The simplest way to define a component 
-is to write a JS function: */
+/* The simplest way to define a component is to write a JS function: */
 
 function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+
+// or use arrow function
+const Welcome2 = (props) => {
   return <h1>Hello, {props.name}</h1>;
 }
 
@@ -120,7 +123,7 @@ class Welcome extends React.Component {
   }
 }
 
-/* Components can refer to other components in their output.
+/* Components can refer to other components in their output. 
 Useful to split components into smaller components. */
 function Welcome(props) {
   return <h1>Hello, {props.name}</h1>;
@@ -388,8 +391,104 @@ function Mailbox(props) {
 }
 ```
 
-## Thinking in React
-How to decide components, for example, build a searchable product data table using React. See https://reactjs.org/docs/thinking-in-react.html.
+## Hooks
+Hooks are a new addition in React 16.8., functions that let you “hook into” React state and lifecycle features from function components **without** writing a *class*. Hooks allow you to reuse stateful logic without changing component hierarchy. See also [API index](https://reactjs.org/docs/hooks-reference.html).
+### Stage Hook  <h4> --> Stage </h4>
+`useState` returns a pair: the current state value and a function that update it, the only argument is the initial state. Similar to `this.setState` in a class, except it doesn’t merge the old and new state together
+The initial state argument is only used during the first render.
+```jsx
+function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
+}
+
+// as same as use class
+class Example extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+  };
+}
+```
+
+### Effect Hook  <h4> --> Lifecycle </h4>
+`useEffect` adds the ability to perform side effects from a function component. It serves the same purpose as `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` in React classes, but unified into a single API. 
+By default, React runs the effects after every render — including the first render. Effects may also optionally specify how to “clean up” after them by returning a function.
+
+Effects Without Cleanup
+```jsx
+function Example() {
+  useEffect(() => {
+    document.title = `You clicked ${count} times`;
+  });
+}
+// as same as use class
+class Example extends React.Component {
+  componentDidMount() {
+    document.title = `You clicked ${this.state.count} times`;
+  }
+  componentDidUpdate() {
+    document.title = `You clicked ${this.state.count} times`;
+  }
+}
+```
+<br>
+Effects with Cleanup<br>
+React performs the cleanup when the component unmounts.
+
+```jsx
+function FriendStatus(props) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  useEffect(() => {
+    function handleStatusChange(status) {
+      setIsOnline(status.isOnline);
+    }
+    ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+    // Specify how to clean up after this effect:
+    return function cleanup() {
+      ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
+    };
+  });
+}
+// as same as use class
+class FriendStatus extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { isOnline: null };
+    this.handleStatusChange = this.handleStatusChange.bind(this);
+  }
+
+  componentDidMount() {
+    ChatAPI.subscribeToFriendStatus(
+      this.props.friend.id,
+      this.handleStatusChange
+    );
+  }
+  componentWillUnmount() {
+    ChatAPI.unsubscribeFromFriendStatus(
+      this.props.friend.id,
+      this.handleStatusChange
+    );
+  }
+  handleStatusChange(status) {
+    this.setState({
+      isOnline: status.isOnline
+    });
+  }
+}
+```
+
+### `useRef`
+`useRef` basically like `document.getElementsById` or `document.getElementsByClassName`, hooking that particular components.
+
+### Rules
+Hooks are JavaScript functions, but they impose two additional rules:
+- Only call Hooks at the top level. Don’t call Hooks inside loops, conditions, or nested functions, always before any early return. To ensure that Hooks are called in the same order each time a component renders.
+- Only call Hooks from React function components(or from custom Hooks). Don’t call Hooks from regular JavaScript functions. 
+
+
 
 ## Define Object/Function in React with TS
 ### Define Object

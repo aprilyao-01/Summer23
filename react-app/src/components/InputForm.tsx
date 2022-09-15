@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import DropDown from './DropDown'
 
 interface Props {
@@ -7,12 +7,18 @@ interface Props {
   handleAddNew: (e:React.FormEvent) => void;   // function return nothing
 }
 
-const InputFelid = ({employee, setEmployee, handleAddNew} : Props) => {
+const InputForm = ({employee, setEmployee, handleAddNew} : Props) => {
+  const inputRef = useRef<HTMLInputElement>(null);      // #new-employee-input input
+
   return (
-    <form id = 'new-employee-form' onSubmit={handleAddNew}> 
+    <form id = 'new-employee-form' onSubmit={(e) => {
+      handleAddNew(e)
+      inputRef.current?.blur();     // remove the focus effect if push enter
+    }}> 
       <DropDown />
-      <input type='input'
-            id="new-employee-input"
+      <input id='new-employee-input'
+            type='input'
+            ref={inputRef}
             value={employee}
             onChange={ (e)=>setEmployee(e.target.value) }
             placeholder='Hire someone to work for you (for free) :)' />
@@ -21,4 +27,4 @@ const InputFelid = ({employee, setEmployee, handleAddNew} : Props) => {
   )
 }
 
-export default InputFelid
+export default InputForm
