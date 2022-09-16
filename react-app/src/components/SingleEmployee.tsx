@@ -23,54 +23,34 @@ const SingleEmployee = ({employee,employees,setEmployees} : Props) => {
 
   useEffect(() => {
     employeeRef.current?.addEventListener('transitionend', function(){
-      console.log("classNAme: " + employeeRef.current?.className);
-      if (employeeRef.current?.className == 'employee-fall'){
+      if (employeeRef.current?.className === 'employee-fall'){
         afterFall(employee.id);     // remove after transition end)
-        console.log("id: " + employee.id);
-        console.log("after Fall");
       }
-      
-
-      // removeLocalName(employee_input.value);
-      // employee_element.remove();      // remove after transition end)
     })
   }, [isDelete]);
 
-  const handleDelete =(dele:number) => {
-    console.log('in delete');
+  const handleDelete =() => {
     if(window.confirm('Are you sure to kick this person out?')){
-      // console.log('setTrue');
       setDelete(true);
-      // setEmployees(employees.filter(employee => employee.id!== dele));   // only keep the rest
-      // console.log(employees);
-
     }
-  }
-
-  const handleTransitionEnd = () => {
-    console.log('end');
-    // setEmployees(employees.filter(employee => employee.id!== id));    // only keep the rest
   }
 
   const handleEdit = (edit:number) => {
     if(isEdit === false){
       setEdit(true);
       if (editBtn.current){ editBtn.current.innerText = 'Save'; }
-      console.log(employees);
     } else {
-      console.log ('Save');
       setEmployees(
         employees.map((employee) => 
         (employee.id === edit ? {...employee, name: editName} : employee))
       );
       setEdit(false);
       if (editBtn.current){ editBtn.current.innerText = 'Edit'; }
-      console.log(employees);
     }
   }
 
   function afterFall(id: number) {
-    setEmployees(employees.filter(employee => employee.id !== id));   // only keep the rest
+    setEmployees(employees.filter(employee => employee.id !== id));   // delete the employee from employees
   }
 
   return (
@@ -93,7 +73,7 @@ const SingleEmployee = ({employee,employees,setEmployees} : Props) => {
               onClick={() => handleEdit(employee.id)} 
               ref={editBtn}>Edit
         </button>
-       <button className='delete' onClick={() => handleDelete(employee.id)}>Delete</button>
+       <button className='delete' onClick={handleDelete}>Delete</button>
       </div>
 
     </div>
@@ -101,5 +81,3 @@ const SingleEmployee = ({employee,employees,setEmployees} : Props) => {
 }
 
 export default SingleEmployee
-
-

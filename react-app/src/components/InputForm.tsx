@@ -11,8 +11,8 @@ const InputForm = ({employee, setEmployee, handleAddNew} : Props) => {
   const inputRef = useRef<HTMLInputElement>(null);      // #new-employee-input input
 
   return (
-    <form id = 'new-employee-form' onSubmit={(e) => {
-      handleAddNew(e)
+      <form id = 'new-employee-form' onSubmit={(e) => {
+      handleAddNew(e);
       inputRef.current?.blur();     // remove the focus effect if push enter
     }}> 
       <DropDown />
