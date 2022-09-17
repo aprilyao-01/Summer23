@@ -1,8 +1,7 @@
-# Notes Part
-## React
+# React
 React is a JavaScript library for building user interfaces.
 
-## Create a New React App using `Create React App`
+# Create a New React App using `Create React App`
 `Create React App` is the best way to start building a new **single-page application** in React. 
 Required: `Node >= 14.0.0` and `npm >= 5.6`.
 
@@ -21,19 +20,19 @@ Required: `Node >= 14.0.0` and `npm >= 5.6`.
 
 `Create React App` doesn’t handle backend logic or databases; it just creates a frontend build pipeline, so it can be used with any backend. A readme file is auto created after run the command, see [createApp-original-readme](/react-app/createApp-original-readme.md).
 
-### Add React to a Website
+## Add React to a Website
 <!-- TODO -->
 
 
 
-## JSX
-### What is JSX and why use it
+# JSX
+## What is JSX and why use it
 ``` jsx
 const element = <h1>Hello, world!</h1>;
 ```
 JSX like above tag syntax is neither a string nor HTML, it's a syntax extension to JS. It describes what the UI should look like. React *doesn’t require* using JSX, but it's helpful as a visual aid when working with UI inside the JS code. It also allows React to show more useful error and warning messages.
 
-### How to use JSX
+## How to use JSX
 *See https://reactjs.org/docs/introducing-jsx.html for examples.*
 
 1. **Any** valid JS expression can be put inside the curly braces { } in JSX.
@@ -48,8 +47,8 @@ JSX like above tag syntax is neither a string nor HTML, it's a syntax extension 
 
 6. Babel compiles JSX down to **`React.createElement()`** calls, which will performs a few checks to help write bug-free code but essentially it creates an object. These objects are called **“React elements”** that describes what you want to see on the screen. React reads these objects and uses them to construct the DOM and keep it up to date.
 
-## Elements, Components, Props, State and Lifecycle
-### Elements
+# Elements, Components, Props, State and Lifecycle
+## Elements
 Elements are the smallest building blocks of React apps. An element describes what you want to see on the screen. React DOM takes care of updating the DOM to match the React elements.
 ```jsx
 const element = <h1>Hello, world</h1>;
@@ -71,7 +70,7 @@ React elements are **immutable**. Once you create an element, you can’t change
 Also, React DOM compares the element and its children to the previous one, and **only** applies the DOM updates **necessary** to bring the DOM to the desired state.
 
 
-### Components
+## Components
 Components let developer split the UI into **independent**, **reusable** pieces, and think about each piece in isolation. Conceptually, components are like JS functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
 ```jsx
 /* The simplest way to define a component is to write a JS function: */
@@ -115,7 +114,7 @@ function App() {
 
 :warning: Always start component names with a capital letter. React treats components starting with lowercase letters as DOM tags. For example, `<div /> `represents an HTML div tag, but `<Welcome />` represents a component and requires Welcome to be in scope.
 
-### Props
+## Props
 React elements not only represent DOM tags can also represent **user-defined components**. When React sees an element representing a user-defined component, it passes JSX attributes and children to this component as a single object. This object  is **“props”**.
 ```jsx
 function Welcome(props) {
@@ -128,7 +127,7 @@ root.render(element);
 ```
 :warning: Props are **read-only**. Whether you declare a component as a function or a class, it must never modify its own props. All React components must act like pure functions with respect to their props.
 
-### State
+## State
 State is similar to props, but it is **private** and fully controlled by the component.
 
 Convert a function component to a class in :raised_hand_with_fingers_splayed: steps:
@@ -238,7 +237,7 @@ function FormattedDate(props) {
 }
 ```
 
-### Lifecycle
+## Lifecycle
 **“Mounting”**: Whenever the `Clock` is rendered to the DOM for the first time. 
 **“Unmounting”**: Whenever the DOM produced by the `Clock` is removed.
 **“Lifecycle methods”**:  Special methods can be declared on the component class to run some code when a component *mounts and unmounts*.
@@ -280,7 +279,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Clock />);
 ```
 
-## Handling Events
+# Handling Events
 Handling events with React elements is very similar to handling events on DOM elements. There are some syntax differences:
 - React events are named using **camelCase**, rather than lowercase.
 - With JSX you pass a **function** as the event handler, rather than a string.
@@ -318,7 +317,7 @@ Passing Arguments to Event Handlers: Inside a loop, it is common to want to pass
 <button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
 ```
 
-## Conditional Rendering
+# Conditional Rendering
 In React, distinct components can encapsulate distinct behaviors. Depending on the state of the application, can render only some of them.
 Conditional rendering in React works the same way conditions work in JavaScript. Use JavaScript operators like `if` or the `conditional operator` to create elements representing the current state, and let React update the UI to match them.
 ```jsx
@@ -364,9 +363,9 @@ function Mailbox(props) {
 }
 ```
 
-## Hooks
+# Hooks
 Hooks are a new addition in React 16.8., functions that let you “hook into” React state and lifecycle features from function components **without** writing a *class*. Hooks allow you to reuse stateful logic without changing component hierarchy. See also [API index](https://reactjs.org/docs/hooks-reference.html).
-### Stage Hook  <h4> --> Stage </h4>
+## Stage Hook  <h4> --> Stage </h4>
 `useState` returns a pair: the current state value and a function that update it, the only argument is the initial state. Similar to `this.setState` in a class, except it doesn’t merge the old and new state together
 The initial state argument is only used during the first render.
 ```jsx
@@ -385,7 +384,7 @@ class Example extends React.Component {
 }
 ```
 
-### Effect Hook  <h4> --> Lifecycle </h4>
+## Effect Hook  <h4> --> Lifecycle </h4>
 `useEffect` adds the ability to perform side effects from a function component. It serves the same purpose as `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` in React classes, but unified into a single API. 
 By default, React runs the effects after every render — including the first render. Effects may also optionally specify how to “clean up” after them by returning a function.
 
@@ -453,18 +452,18 @@ class FriendStatus extends React.Component {
 }
 ```
 
-### `useRef`
+## `useRef`
 `useRef` basically like `document.getElementsById` or `document.getElementsByClassName`, hooking that particular components.
 
-### Rules
+## Rules
 Hooks are JavaScript functions, but they impose two additional rules:
 - Only call Hooks at the top level. Don’t call Hooks inside loops, conditions, or nested functions, always before any early return. To ensure that Hooks are called in the same order each time a component renders.
 - Only call Hooks from React function components(or from custom Hooks). Don’t call Hooks from regular JavaScript functions. 
 
 
 
-## Define Object/Function in React with TS
-### Define Object
+# Define Object/Function in React with TS
+## Define Object
 ```tsx
 // define object type
 type Person = {
@@ -495,9 +494,36 @@ interface PersonPlus2 extends StrongPerson {        // interface extends type
 }
 ```
 
-### Define Function 
+## Define Function 
 ```tsx
 // define function type
 let printName : (name: string) => void;     // functionName: (variable : varType) => returnType
 let printName2 : (name: string) => never;     // void return undefined, never doesn't return anything
 ```
+
+# Link to Backend FastAPI
+## Backend
+In `main.py`, make sure **add middleware** to make cross-origin requests -- i.e., requests that originate from a different protocol, IP address, domain name, or port.
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+```
+## Frontend
+Create asynchronous functions to request from database, see [`operation.ts`](/react-app/src/components/operation.ts).
+For `Asnyc/ Await`, see notes for `Asnyc/ Await` part in [`TypeScript/readme.md`](/TypeScript/readme.md).
+
+# Ant Design
+`antd` is a react library for **design UI**, it has default UI style for basically every components, to make style components fast and beautiful.
+To use ant design with react:
+1. Install antd by `npm install antd --save`.
+2. Add antd to project by `npm add antd`.
+3. Import components in `js` or `tsx` file. For example  `import { Button, Table, Form, Switch } from 'antd';`
+4. Import antd style by add `@import '~antd/dist/antd.css';` in the first line of css file.
+5. Use it.
