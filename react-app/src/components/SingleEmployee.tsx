@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Employee } from './model'
+import { deleteById, updateById } from './operation';
 
 type Props = {
   employee: Employee;
@@ -22,9 +23,9 @@ const SingleEmployee = ({employee,employees,setEmployees} : Props) => {
   }, [isEdit]);
 
   useEffect(() => {
-    employeeRef.current?.addEventListener('transitionend', function(){
+    employeeRef.current?.addEventListener('transitionend', async function(){
       if (employeeRef.current?.className === 'employee-fall'){
-        afterFall(employee.id);     // remove after transition end)
+        await afterFall(employee.id);     // remove after transition end
       }
     })
   }, [isDelete]);
@@ -35,22 +36,25 @@ const SingleEmployee = ({employee,employees,setEmployees} : Props) => {
     }
   }
 
-  const handleEdit = (edit:number) => {
+  const handleEdit = async (editID:number) => {
     if(isEdit === false){
       setEdit(true);
       if (editBtn.current){ editBtn.current.innerText = 'Save'; }
     } else {
       setEmployees(
         employees.map((employee) => 
-        (employee.id === edit ? {...employee, name: editName} : employee))
+        (employee.id === editID ? {...employee, name: editName} : employee))
       );
+      await updateById(editID, {name: editName});
       setEdit(false);
       if (editBtn.current){ editBtn.current.innerText = 'Edit'; }
     }
   }
 
-  function afterFall(id: number) {
+  async function afterFall(id: number) {
     setEmployees(employees.filter(employee => employee.id !== id));   // delete the employee from employees
+    await deleteById(id);       // DELETE from backend db
+    // backend shows '404not found' but it is deleted
   }
 
   return (
