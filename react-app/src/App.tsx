@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InputForm from './components/InputForm';
 import './App.css';
 import HeadTitle from './components/HeadTitle';
