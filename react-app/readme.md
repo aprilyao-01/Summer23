@@ -7,8 +7,9 @@
 1. Open another terminal window, cd to folder `react-app` then run `npm stat`.
 2. It will auto open the frontend page in browser, if not, go to http://localhost:3000/ to see the frontend.
 
-![screenshot1](/img/screenshot1.png)
-![screenshot2](/img/screenshot2.png)
+## ScreenShot
+|![screenshot1](/img/screenshot1.png)|![screenshot2](/img/screenshot2.png)|
+|-|-|
 # File Structure
 ```bash
 react-app
