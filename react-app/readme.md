@@ -1,12 +1,14 @@
 # Run the code
 ## Backend
-1. Open a terminal window, cd to folder `react-app` then run `uvicorn peewee_app.main:app --reload`.
+1. Open a terminal window, cd to folder `react-app` then run `uvicorn backend.main:app --reload`.
 2. Open http://127.0.0.1:8000/docs or http://127.0.0.1:8000/redoc in browser to monitor the backend.
 
 ## Frontend
 1. Open another terminal window, cd to folder `react-app` then run `npm stat`.
 2. It will auto open the frontend page in browser, if not, go to http://localhost:3000/ to see the frontend.
 
+![screenshot1](/img/screenshot1.png)
+![screenshot2](/img/screenshot2.png)
 # File Structure
 ```bash
 react-app
